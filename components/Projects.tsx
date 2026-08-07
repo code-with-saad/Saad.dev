@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
-import { ExternalLink, Github, X, ChevronRight } from "lucide-react";
+import { ExternalLink, Github, X, ChevronRight, ChevronLeft, Maximize2 } from "lucide-react";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 interface Project {
@@ -17,7 +17,6 @@ interface Project {
   stack: string[];
   techDecision: string;
   image: string;
-  // Stack of 3 images (1 real screenshot + 2 generated placeholders)
   images: string[];
   liveUrl: string;
   githubUrl: string;
@@ -40,11 +39,10 @@ const projects: Project[] = [
     techDecision:
       "Chosen for its flexible document schema allowing dynamic menu item modifiers and sub-second JSON response payloads.",
     image: "/projects/dinepine.png",
-    // Image stack: [0] = Real screenshot, [1] & [2] = Generated placeholder UI screens
     images: [
-      "/projects/dinepine.png", // Real working screenshot
-      "/projects/dinepine_dash.png", // [PLACEHOLDER] Generated Order Dashboard UI
-      "/projects/dinepine_bill.png", // [PLACEHOLDER] Generated Billing & Receipt UI
+      "/projects/dinepine.png",
+      "/projects/dinepine_dash.png",
+      "/projects/dinepine_bill.png",
     ],
     liveUrl: "https://dinepine-pos.vercel.app",
     githubUrl: "https://github.com/code-with-saad/POS",
@@ -64,11 +62,10 @@ const projects: Project[] = [
     techDecision:
       "Vanilla JS eliminated framework bundle overhead, guaranteeing sub-100ms LCP on low-tier mobile hardware.",
     image: "/projects/a1uniforms.png",
-    // Image stack: [0] = Real screenshot, [1] & [2] = Generated placeholder UI screens
     images: [
-      "/projects/a1uniforms.png", // Real working screenshot
-      "/projects/a1uniforms_grid.png", // [PLACEHOLDER] Generated Product Grid UI
-      "/projects/a1uniforms_filter.png", // [PLACEHOLDER] Generated Filter Drawer UI
+      "/projects/a1uniforms.png",
+      "/projects/a1uniforms_grid.png",
+      "/projects/a1uniforms_filter.png",
     ],
     liveUrl: "https://a1uniforms.vercel.app",
     githubUrl: "https://github.com/code-with-saad/E-PROJECT",
@@ -88,11 +85,10 @@ const projects: Project[] = [
     techDecision:
       "MySQL relational schema enforced strict foreign key constraints and ACID transactional integrity across appointment centers.",
     image: "/projects/covidcare.png",
-    // Image stack: [0] = Real screenshot, [1] & [2] = Generated placeholder UI screens
     images: [
-      "/projects/covidcare.png", // Real working screenshot
-      "/projects/covidcare_form.png", // [PLACEHOLDER] Generated Appointment Booking UI
-      "/projects/covidcare_admin.png", // [PLACEHOLDER] Generated Hospital Admin Panel UI
+      "/projects/covidcare.png",
+      "/projects/covidcare_form.png",
+      "/projects/covidcare_admin.png",
     ],
     liveUrl: "https://covid-care.infinityfree.io",
     githubUrl: "https://github.com/code-with-saad/Covid-Care",
@@ -100,6 +96,103 @@ const projects: Project[] = [
 ];
 
 const MAX_VISIBLE_PILLS = 3;
+
+// ─── Image Lightbox Modal (Click to View Full Size with Next/Prev) ────────────
+function ImageLightboxModal({
+  images,
+  initialIndex,
+  projectTitle,
+  onClose,
+}: {
+  images: string[];
+  initialIndex: number;
+  projectTitle: string;
+  onClose: () => void;
+}) {
+  const [currentIndex, setCurrentIndex] = useState(initialIndex);
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+      if (e.key === "ArrowLeft") setCurrentIndex((i) => (i > 0 ? i - 1 : images.length - 1));
+      if (e.key === "ArrowRight") setCurrentIndex((i) => (i < images.length - 1 ? i + 1 : 0));
+    };
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", onKey);
+    return () => {
+      document.body.style.overflow = "";
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [images.length, onClose]);
+
+  return (
+    <AnimatePresence>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md"
+        onClick={onClose}
+      >
+        <div
+          className="relative max-w-5xl w-full max-h-[90vh] flex flex-col items-center justify-center"
+          onClick={(e) => e.stopPropagation()}
+        >
+          {/* Header */}
+          <div className="w-full flex items-center justify-between py-3 px-4 text-white text-sm">
+            <div className="font-semibold">
+              {projectTitle} — Preview {currentIndex + 1} of {images.length}
+            </div>
+            <button
+              onClick={onClose}
+              className="p-2 rounded-lg bg-slate-800/80 text-slate-300 hover:text-white transition-colors"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+
+          {/* Main Image */}
+          <div className="relative w-full aspect-video rounded-xl overflow-hidden border border-slate-800 bg-slate-950 shadow-2xl">
+            <Image
+              src={images[currentIndex]}
+              alt={`${projectTitle} screenshot ${currentIndex + 1}`}
+              fill
+              className="object-contain"
+              priority
+            />
+          </div>
+
+          {/* Navigation Controls */}
+          <div className="flex items-center justify-between w-full mt-4 px-2">
+            <button
+              onClick={() => setCurrentIndex((i) => (i > 0 ? i - 1 : images.length - 1))}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-900/90 border border-slate-700 text-slate-200 hover:bg-slate-800 hover:text-emerald-400 transition-colors font-medium text-xs"
+            >
+              <ChevronLeft className="w-4 h-4" /> Previous
+            </button>
+            <div className="flex items-center gap-2">
+              {images.map((_, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => setCurrentIndex(idx)}
+                  className={`w-2.5 h-2.5 rounded-full transition-all ${
+                    currentIndex === idx ? "bg-emerald-400 w-6" : "bg-slate-700 hover:bg-slate-500"
+                  }`}
+                />
+              ))}
+            </div>
+            <button
+              onClick={() => setCurrentIndex((i) => (i < images.length - 1 ? i + 1 : 0))}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-900/90 border border-slate-700 text-slate-200 hover:bg-slate-800 hover:text-emerald-400 transition-colors font-medium text-xs"
+            >
+              Next <ChevronRight className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+      </motion.div>
+    </AnimatePresence>
+  );
+}
 
 // ─── Case Study Modal ─────────────────────────────────────────────────────────
 function CaseStudyModal({
@@ -112,7 +205,6 @@ function CaseStudyModal({
   const dialogRef = useRef<HTMLDivElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
 
-  // Close on Escape
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
@@ -121,7 +213,6 @@ function CaseStudyModal({
     return () => document.removeEventListener("keydown", onKey);
   }, [onClose]);
 
-  // Prevent body scroll
   useEffect(() => {
     document.body.style.overflow = "hidden";
     closeRef.current?.focus();
@@ -130,7 +221,6 @@ function CaseStudyModal({
     };
   }, []);
 
-  // Focus trap
   const handleTab = useCallback(
     (e: React.KeyboardEvent<HTMLDivElement>) => {
       if (e.key !== "Tab" || !dialogRef.current) return;
@@ -206,7 +296,6 @@ function CaseStudyModal({
 
           {/* Modal Body */}
           <div className="p-6 space-y-7 text-sm">
-            {/* Overview */}
             <div className="space-y-2">
               <h4 className="text-[11px] font-bold uppercase tracking-wider text-emerald-400 font-mono">
                 Overview
@@ -214,7 +303,6 @@ function CaseStudyModal({
               <p className="text-slate-300 leading-relaxed">{project.overview}</p>
             </div>
 
-            {/* Challenge & Solution */}
             <div className="space-y-2">
               <h4 className="text-[11px] font-bold uppercase tracking-wider text-emerald-400 font-mono">
                 Challenge &amp; Solution
@@ -222,7 +310,6 @@ function CaseStudyModal({
               <p className="text-slate-300 leading-relaxed">{project.challengeSolution}</p>
             </div>
 
-            {/* Tech Stack & Rationale */}
             <div className="space-y-3">
               <h4 className="text-[11px] font-bold uppercase tracking-wider text-emerald-400 font-mono">
                 Tech Stack &amp; Rationale
@@ -243,7 +330,6 @@ function CaseStudyModal({
               </p>
             </div>
 
-            {/* Action links */}
             <div className="pt-2 border-t border-slate-800/80 flex items-center gap-3 flex-wrap">
               <a
                 href={project.liveUrl}
@@ -276,13 +362,16 @@ function ProjectCard({
   project,
   index,
   onOpenModal,
+  onOpenLightbox,
 }: {
   project: Project;
   index: number;
   onOpenModal: (p: Project) => void;
+  onOpenLightbox: (images: string[], initialIdx: number, title: string) => void;
 }) {
   const visibleStack = project.stack.slice(0, MAX_VISIBLE_PILLS);
   const extraCount = project.stack.length - MAX_VISIBLE_PILLS;
+  const [activeTab, setActiveTab] = useState(0);
 
   return (
     <motion.article
@@ -301,52 +390,68 @@ function ProjectCard({
         "hover:-translate-y-1",
       ].join(" ")}
     >
-      {/* ── 3-Image Stack Preview Container ── */}
-      <div className="relative aspect-video w-full overflow-hidden bg-slate-950 p-3 sm:p-4 flex items-center justify-center">
-        <div className="relative w-full h-full max-w-[92%]">
+      {/* ── Clear & Clean Image Preview Box with Active Tab & Lightbox ── */}
+      <div className="relative aspect-video w-full overflow-hidden bg-slate-950 flex flex-col group/img">
+        {/* Active Screen Display */}
+        <div
+          className="relative w-full h-full cursor-pointer overflow-hidden"
+          onClick={() => onOpenLightbox(project.images, activeTab, project.title)}
+        >
+          {project.images.map((imgUrl, imgIdx) => (
+            <div
+              key={imgUrl}
+              className={`absolute inset-0 transition-all duration-500 ease-out ${
+                activeTab === imgIdx
+                  ? "opacity-100 scale-100 z-10"
+                  : "opacity-0 scale-95 z-0 pointer-events-none"
+              }`}
+            >
+              <Image
+                src={imgUrl}
+                alt={`${project.title} preview ${imgIdx + 1}`}
+                fill
+                sizes="(max-width: 768px) 100vw, 50vw"
+                className="object-cover object-top transition-transform duration-500 group-hover/img:scale-105"
+                priority={index === 0 && imgIdx === 0}
+              />
+            </div>
+          ))}
 
-          {/* Image 3 (Bottom/Right layer) — Hidden under 480px (min-[480px]:block) */}
-          <div className="hidden min-[480px]:block absolute inset-0 rounded-xl overflow-hidden border border-slate-800/80 shadow-md transform transition-transform duration-300 ease-out z-10 translate-y-1 rotate-[1deg] min-[480px]:group-hover:translate-x-3 min-[480px]:group-hover:-translate-y-1 min-[480px]:group-hover:rotate-[3deg]">
-            <Image
-              src={project.images[2]}
-              alt={`${project.title} secondary screen preview 2`}
-              fill
-              sizes="(max-width: 768px) 100vw, 50vw"
-              className="object-cover object-top opacity-60 min-[480px]:group-hover:opacity-85 transition-opacity duration-300"
-            />
+          {/* Dim overlay */}
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent pointer-events-none z-20" />
+
+          {/* Lightbox hint icon */}
+          <div className="absolute top-3 right-3 z-30 opacity-0 group-hover/img:opacity-100 transition-opacity duration-200 p-1.5 rounded-lg bg-slate-900/80 text-emerald-400 border border-slate-700 backdrop-blur-sm">
+            <Maximize2 className="w-4 h-4" />
           </div>
-
-          {/* Image 2 (Middle/Left layer) — Hidden under 480px (min-[480px]:block) */}
-          <div className="hidden min-[480px]:block absolute inset-0 rounded-xl overflow-hidden border border-slate-800/80 shadow-md transform transition-transform duration-300 ease-out z-20 translate-y-0.5 -rotate-[1deg] min-[480px]:group-hover:-translate-x-3 min-[480px]:group-hover:-translate-y-1 min-[480px]:group-hover:-rotate-[3deg]">
-            <Image
-              src={project.images[1]}
-              alt={`${project.title} secondary screen preview 1`}
-              fill
-              sizes="(max-width: 768px) 100vw, 50vw"
-              className="object-cover object-top opacity-70 min-[480px]:group-hover:opacity-90 transition-opacity duration-300"
-            />
-          </div>
-
-          {/* Image 1 (Top/Main layer) — Always visible, lifts up -5px & rotates 1deg on hover above 480px */}
-          <div className="absolute inset-0 rounded-xl overflow-hidden border border-slate-800 shadow-xl z-30 transform transition-all duration-300 ease-out min-[480px]:group-hover:-translate-y-1.5 min-[480px]:group-hover:rotate-[1deg] group-hover:border-emerald-500/30 group-hover:shadow-emerald-500/10">
-            <Image
-              src={project.images[0]}
-              alt={`${project.title} main screenshot`}
-              fill
-              sizes="(max-width: 768px) 100vw, 50vw"
-              className="object-cover object-top transition-transform duration-500 ease-out group-hover:scale-105"
-              priority={index === 0}
-            />
-            {/* dim gradient overlay */}
-            <div className="absolute inset-0 bg-gradient-to-t from-slate-950/60 via-transparent to-transparent pointer-events-none" />
-          </div>
-
         </div>
 
-        {/* category badge pinned to top container bottom-left */}
-        <span className="absolute bottom-3 left-3 z-40 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 backdrop-blur-sm">
+        {/* Category Badge */}
+        <span className="absolute bottom-3 left-3 z-30 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 backdrop-blur-sm pointer-events-none">
           {project.category}
         </span>
+
+        {/* Hover / Click Image Switcher Pills (01, 02, 03) */}
+        <div className="absolute bottom-3 right-3 z-30 flex items-center gap-1.5 bg-slate-900/80 border border-slate-800 p-1 rounded-lg backdrop-blur-md">
+          {project.images.map((_, tabIdx) => (
+            <button
+              key={tabIdx}
+              onMouseEnter={() => setActiveTab(tabIdx)}
+              onClick={(e) => {
+                e.stopPropagation();
+                setActiveTab(tabIdx);
+              }}
+              className={`px-2 py-0.5 rounded-md text-[10px] font-mono font-bold transition-all ${
+                activeTab === tabIdx
+                  ? "bg-emerald-500 text-slate-950 shadow-sm"
+                  : "text-slate-400 hover:text-white hover:bg-slate-800"
+              }`}
+              aria-label={`Switch to image ${tabIdx + 1}`}
+            >
+              0{tabIdx + 1}
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* ── Body ── */}
@@ -364,7 +469,7 @@ function ProjectCard({
           <p className="text-xs text-slate-400 leading-snug">{project.subtitle}</p>
         </div>
 
-        {/* Short description (2-line clamp) */}
+        {/* Short description */}
         <p className="text-sm text-slate-300 leading-relaxed line-clamp-2">
           {project.shortDescription}
         </p>
@@ -427,7 +532,7 @@ function ProjectCard({
             target="_blank"
             rel="noopener noreferrer"
             className={[
-              "inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg",
+              "inline-flex items-center gap-2 px-3.5 py-2 rounded-lg",
               "bg-slate-800 border border-slate-700/80 text-slate-300 font-semibold text-xs",
               "transition-all duration-200 ease-out",
               "hover:bg-slate-700 hover:text-white",
@@ -447,6 +552,11 @@ function ProjectCard({
 // ─── Section ──────────────────────────────────────────────────────────────────
 export default function Projects() {
   const [activeProject, setActiveProject] = useState<Project | null>(null);
+  const [lightboxData, setLightboxData] = useState<{
+    images: string[];
+    initialIdx: number;
+    title: string;
+  } | null>(null);
 
   return (
     <section id="projects" className="py-24 px-4 sm:px-6 lg:px-8 bg-[#090d16]/70">
@@ -473,7 +583,7 @@ export default function Projects() {
           <div className="w-12 h-1 bg-emerald-500 rounded-full" />
         </motion.div>
 
-        {/* Project Grid — 2 columns ≥ md, 1 column below */}
+        {/* Project Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {projects.map((project, index) => (
             <ProjectCard
@@ -481,6 +591,9 @@ export default function Projects() {
               project={project}
               index={index}
               onOpenModal={setActiveProject}
+              onOpenLightbox={(images, initialIdx, title) =>
+                setLightboxData({ images, initialIdx, title })
+              }
             />
           ))}
         </div>
@@ -491,6 +604,16 @@ export default function Projects() {
         <CaseStudyModal
           project={activeProject}
           onClose={() => setActiveProject(null)}
+        />
+      )}
+
+      {/* Fullscreen Lightbox Modal */}
+      {lightboxData && (
+        <ImageLightboxModal
+          images={lightboxData.images}
+          initialIndex={lightboxData.initialIdx}
+          projectTitle={lightboxData.title}
+          onClose={() => setLightboxData(null)}
         />
       )}
     </section>
