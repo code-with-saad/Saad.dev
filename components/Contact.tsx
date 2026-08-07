@@ -47,10 +47,10 @@ export default function Contact() {
       <div className="max-w-4xl mx-auto space-y-12">
         {/* Section Header */}
         <motion.div
-          initial={{ opacity: 0, y: 16 }}
+          initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.5 }}
+          viewport={{ once: true, margin: "-80px" }}
+          transition={{ duration: 0.4 }}
           className="space-y-3 text-center sm:text-left"
         >
           <span className="text-emerald-400 font-mono text-xs uppercase tracking-wider font-semibold">
@@ -97,7 +97,7 @@ export default function Contact() {
                   </div>
                   <div>
                     <p className="text-xs text-slate-400">GitHub Profile</p>
-                    <p className="text-xs sm:text-sm font-semibold">github.com/saad</p>
+                    <p className="text-xs sm:text-sm font-semibold">github.com/code-with-saad</p>
                   </div>
                 </a>
 
@@ -190,11 +190,14 @@ export default function Contact() {
                 </div>
               )}
 
-              {/* Submit Button */}
-              <button
+              {/* Submit Button with Hover / Tap micro-interaction */}
+              <motion.button
                 type="submit"
                 disabled={status === "sending"}
-                className="w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 disabled:bg-emerald-600/50 text-slate-950 font-bold text-sm transition-all focus:outline-none focus:ring-2 focus:ring-emerald-400 shadow-lg shadow-emerald-500/20"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.97 }}
+                transition={{ duration: 0.2 }}
+                className="w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 disabled:bg-emerald-600/50 text-slate-950 font-bold text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-400 shadow-lg shadow-emerald-500/20"
               >
                 {status === "sending" ? (
                   <>
@@ -207,7 +210,7 @@ export default function Contact() {
                     <span>Send Message</span>
                   </>
                 )}
-              </button>
+              </motion.button>
             </form>
           </div>
         </div>

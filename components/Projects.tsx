@@ -33,7 +33,7 @@ const projects: Project[] = [
       "Chosen for its flexible document schema allowing dynamic menu item modifiers and sub-second JSON response payloads.",
     image: "/projects/dinepine.png",
     liveUrl: "https://dinepine-pos.vercel.app",
-    githubUrl: "https://github.com/Saad-Software-Engineer/DinePine-POS",
+    githubUrl: "https://github.com/code-with-saad/POS",
   },
   {
     id: "a1uniforms",
@@ -49,7 +49,7 @@ const projects: Project[] = [
       "Vanilla JS eliminated framework bundle overhead, guaranteeing sub-100ms LCP on low-tier mobile hardware.",
     image: "/projects/a1uniforms.png",
     liveUrl: "https://a1uniforms.vercel.app",
-    githubUrl: "https://github.com/Saad-Software-Engineer/A1-Uniforms-Catalog",
+    githubUrl: "https://github.com/code-with-saad/E-PROJECT",
   },
   {
     id: "covidcare",
@@ -65,7 +65,7 @@ const projects: Project[] = [
       "MySQL relational schema enforced strict foreign key constraints and ACID transactional integrity across appointment centers.",
     image: "/projects/covidcare.png",
     liveUrl: "https://covid-care.infinityfree.io",
-    githubUrl: "https://github.com/Saad-Software-Engineer/COVID-Care-System",
+    githubUrl: "https://github.com/code-with-saad/Covid-Care",
   },
 ];
 
@@ -75,10 +75,10 @@ export default function Projects() {
       <div className="max-w-6xl mx-auto space-y-16">
         {/* Section Header */}
         <motion.div
-          initial={{ opacity: 0, y: 16 }}
+          initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.5 }}
+          viewport={{ once: true, margin: "-80px" }}
+          transition={{ duration: 0.4 }}
           className="space-y-3"
         >
           <span className="text-emerald-400 font-mono text-xs uppercase tracking-wider font-semibold">
@@ -98,11 +98,12 @@ export default function Projects() {
           {projects.map((project, index) => (
             <motion.article
               key={project.id}
-              initial={{ opacity: 0, y: 24 }}
+              initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-100px" }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
-              className="bg-[#0e1526] border border-slate-800/90 rounded-2xl overflow-hidden shadow-xl flex flex-col lg:flex-row gap-0 group hover:border-slate-700/80 transition-all duration-300"
+              viewport={{ once: true, margin: "-80px" }}
+              transition={{ duration: 0.4, delay: index * 0.1 }}
+              whileHover={{ y: -5 }}
+              className="bg-[#0e1526] border border-slate-800/90 rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl hover:shadow-emerald-500/5 flex flex-col lg:flex-row gap-0 group hover:border-slate-700/80 transition-all duration-300"
             >
               {/* Image Column (54% width) */}
               <div className="lg:w-[54%] relative min-h-[280px] sm:min-h-[340px] bg-slate-950 flex items-center justify-center p-4 border-b lg:border-b-0 lg:border-r border-slate-800/80">
@@ -140,7 +141,7 @@ export default function Projects() {
                   </p>
                 </div>
 
-                {/* 3 Main Content Blocks (No nested border boxes, scannable) */}
+                {/* 3 Main Content Blocks */}
                 <div className="space-y-5 text-xs sm:text-sm text-slate-300">
                   {/* Block 1: Overview */}
                   <div className="space-y-1">
@@ -183,29 +184,35 @@ export default function Projects() {
                   </div>
                 </div>
 
-                {/* External Action Links */}
+                {/* External Action Links with Hover / Tap Scale */}
                 <div className="pt-4 border-t border-slate-800/80 flex items-center gap-3">
-                  <a
+                  <motion.a
                     href={project.liveUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs sm:text-sm transition-all focus:outline-none focus:ring-2 focus:ring-emerald-400"
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.97 }}
+                    transition={{ duration: 0.2 }}
+                    className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs sm:text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-400"
                     aria-label={`Live Demo of ${project.title}`}
                   >
                     <span>Live Demo</span>
                     <ExternalLink className="w-3.5 h-3.5" />
-                  </a>
+                  </motion.a>
 
-                  <a
+                  <motion.a
                     href={project.githubUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-700/80 text-slate-200 font-semibold text-xs sm:text-sm transition-all focus:outline-none focus:ring-2 focus:ring-slate-500"
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.97 }}
+                    transition={{ duration: 0.2 }}
+                    className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-700/80 text-slate-200 font-semibold text-xs sm:text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-slate-500"
                     aria-label={`GitHub Repository for ${project.title}`}
                   >
                     <Github className="w-3.5 h-3.5" />
                     <span>GitHub Repo</span>
-                  </a>
+                  </motion.a>
                 </div>
               </div>
             </motion.article>
