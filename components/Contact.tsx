@@ -20,46 +20,38 @@ export default function Contact() {
     setStatus("sending");
     setErrorMessage("");
 
+    const serviceId = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID || "service_munh7wj";
+    const templateId = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID;
+    const publicKey = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY;
+
     try {
-      // 1. Submit to API route handler
-      const res = await fetch("/api/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
-
-      const data = await res.json();
-
-      // 2. Client-side EmailJS fallback execution if environment keys are set
-      const serviceId = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID;
-      const templateId = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID;
-      const publicKey = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY;
-
-      if (serviceId && templateId && publicKey) {
-        await emailjs.send(
-          serviceId,
-          templateId,
-          {
-            from_name: formData.name,
-            from_email: formData.email,
-            to_email: "saadkashif770@gmail.com",
-            message: formData.message,
-          },
-          publicKey
-        );
+      if (!templateId || !publicKey) {
+        throw new Error("EmailJS environment variables missing!");
       }
 
-      if (res.ok && data.success) {
-        setStatus("success");
-        setFormData({ name: "", email: "", message: "" });
-      } else {
-        setStatus("error");
-        setErrorMessage(data.error || "Failed to send message. Please try again.");
-      }
-    } catch (err) {
-      console.error(err);
+      await emailjs.send(
+        serviceId,
+        templateId,
+        {
+          from_name: formData.name,
+          from_email: formData.email,
+          message: formData.message,
+        },
+        publicKey
+      );
+
+      setStatus("success");
+      setFormData({ name: "", email: "", message: "" });
+    } catch (error: unknown) {
+      const msg =
+        error instanceof Error
+          ? error.message
+          : typeof error === "object" && error !== null && "text" in error
+          ? String((error as { text: string }).text)
+          : "Unknown error";
+      console.error("Failed to send message:", msg, error);
       setStatus("error");
-      setErrorMessage("An unexpected error occurred. Please try again.");
+      setErrorMessage(`Failed to send message: ${msg}`);
     }
   };
 
