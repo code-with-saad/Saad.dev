@@ -45,3 +45,69 @@ body {
   background-color: rgba(16, 185, 129, 0.3);
   color: #34d399;
 }
+
+/* Aurora Background Keyframes */
+@keyframes aurora-1 {
+  0%, 100% {
+    transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
+  }
+  50% {
+    transform: translate3d(60px, -40px, 0) rotate(120deg) scale(1.08);
+  }
+}
+
+@keyframes aurora-2 {
+  0%, 100% {
+    transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
+  }
+  50% {
+    transform: translate3d(-50px, 50px, 0) rotate(-120deg) scale(1.12);
+  }
+}
+
+@keyframes aurora-3 {
+  0%, 100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(40px, 40px, 0) scale(0.92);
+  }
+}
+
+.aurora-blob-1 {
+  animation: aurora-1 20s ease-in-out infinite;
+  will-change: transform;
+}
+
+.aurora-blob-2 {
+  animation: aurora-2 25s ease-in-out infinite;
+  will-change: transform;
+}
+
+.aurora-blob-3 {
+  animation: aurora-3 22s ease-in-out infinite;
+  will-change: transform;
+}
+
+/* Orbit Spinner Animation for Loading Screen */
+@keyframes orbit-rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-orbit {
+  animation: orbit-rotate 1.5s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aurora-blob-1,
+  .aurora-blob-2,
+  .aurora-blob-3,
+  .animate-orbit {
+    animation: none !important;
+  }
+}

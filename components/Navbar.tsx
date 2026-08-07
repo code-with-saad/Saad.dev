@@ -29,11 +29,10 @@ export default function Navbar() {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled
-          ? "bg-[#090d16]/90 backdrop-blur-md border-b border-slate-800/80 shadow-md py-3.5"
-          : "bg-transparent py-5"
-      }`}
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled
+        ? "bg-[#090d16]/90 backdrop-blur-md border-b border-slate-800/80 shadow-md py-3.5"
+        : "bg-transparent py-5"
+        }`}
     >
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
         {/* Brand Logo */}
@@ -64,7 +63,7 @@ export default function Navbar() {
         {/* Social Icons & Action */}
         <div className="hidden md:flex items-center space-x-3 border-l border-slate-800 pl-4">
           <a
-            href="https://github.com"
+            href="https://github.com/code-with-saad"
             target="_blank"
             rel="noopener noreferrer"
             className="p-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all"
@@ -73,7 +72,7 @@ export default function Navbar() {
             <Github className="w-5 h-5" />
           </a>
           <a
-            href="https://linkedin.com"
+            href="https://www.linkedin.com/in/codewithsaad"
             target="_blank"
             rel="noopener noreferrer"
             className="p-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all"

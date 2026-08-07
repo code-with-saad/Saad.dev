@@ -3,6 +3,7 @@
 import { useState, FormEvent } from "react";
 import { motion } from "framer-motion";
 import { Mail, Github, Linkedin, Send, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
+import emailjs from "@emailjs/browser";
 
 export default function Contact() {
   const [formData, setFormData] = useState({
@@ -20,6 +21,7 @@ export default function Contact() {
     setErrorMessage("");
 
     try {
+      // 1. Submit to API route handler
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -27,6 +29,25 @@ export default function Contact() {
       });
 
       const data = await res.json();
+
+      // 2. Client-side EmailJS fallback execution if environment keys are set
+      const serviceId = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID;
+      const templateId = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID;
+      const publicKey = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY;
+
+      if (serviceId && templateId && publicKey) {
+        await emailjs.send(
+          serviceId,
+          templateId,
+          {
+            from_name: formData.name,
+            from_email: formData.email,
+            to_email: "saadkashif770@gmail.com",
+            message: formData.message,
+          },
+          publicKey
+        );
+      }
 
       if (res.ok && data.success) {
         setStatus("success");
@@ -38,7 +59,7 @@ export default function Contact() {
     } catch (err) {
       console.error(err);
       setStatus("error");
-      setErrorMessage("An unexpected network error occurred. Please try again.");
+      setErrorMessage("An unexpected error occurred. Please try again.");
     }
   };
 
@@ -74,7 +95,7 @@ export default function Contact() {
               
               <div className="space-y-4 text-sm text-slate-300">
                 <a
-                  href="mailto:saad.dev@example.com"
+                  href="mailto:saadkashif770@gmail.com"
                   className="flex items-center gap-3 p-3 rounded-xl bg-slate-900/80 border border-slate-800 hover:border-emerald-500/40 text-slate-200 hover:text-emerald-400 transition-all group"
                 >
                   <div className="w-9 h-9 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 shrink-0">
@@ -82,12 +103,12 @@ export default function Contact() {
                   </div>
                   <div className="overflow-hidden">
                     <p className="text-xs text-slate-400">Direct Email</p>
-                    <p className="text-xs sm:text-sm font-semibold truncate">saad.dev@example.com</p>
+                    <p className="text-xs sm:text-sm font-semibold truncate">saadkashif770@gmail.com</p>
                   </div>
                 </a>
 
                 <a
-                  href="https://github.com"
+                  href="https://github.com/code-with-saad"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center gap-3 p-3 rounded-xl bg-slate-900/80 border border-slate-800 hover:border-emerald-500/40 text-slate-200 hover:text-emerald-400 transition-all group"
@@ -102,7 +123,7 @@ export default function Contact() {
                 </a>
 
                 <a
-                  href="https://linkedin.com"
+                  href="https://www.linkedin.com/in/codewithsaad"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center gap-3 p-3 rounded-xl bg-slate-900/80 border border-slate-800 hover:border-emerald-500/40 text-slate-200 hover:text-emerald-400 transition-all group"
@@ -112,7 +133,7 @@ export default function Contact() {
                   </div>
                   <div>
                     <p className="text-xs text-slate-400">LinkedIn Profile</p>
-                    <p className="text-xs sm:text-sm font-semibold">linkedin.com/in/saad</p>
+                    <p className="text-xs sm:text-sm font-semibold">linkedin.com/in/codewithsaad</p>
                   </div>
                 </a>
               </div>
@@ -190,7 +211,7 @@ export default function Contact() {
                 </div>
               )}
 
-              {/* Submit Button with Hover / Tap micro-interaction */}
+              {/* Submit Button */}
               <motion.button
                 type="submit"
                 disabled={status === "sending"}

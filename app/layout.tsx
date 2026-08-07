@@ -5,20 +5,20 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"], display: "swap" });
 
 export const metadata: Metadata = {
-  title: "Saad | CS Student & Full-Stack Web Developer",
-  description: "Computer Science student and full-stack developer specializing in Next.js, React, Node.js, and web application management systems.",
-  keywords: ["CS Student", "Software Developer", "Full Stack Engineer", "Next.js", "React", "Node.js", "Web Developer Portfolio"],
+  title: "Saad | Full-Stack Web Developer",
+  description: "Full-stack developer specializing in Next.js, React, Node.js, and web application management systems.",
+  keywords: ["Software Developer", "Full Stack Engineer", "Next.js", "React", "Node.js", "Web Developer Portfolio"],
   authors: [{ name: "Saad" }],
   openGraph: {
-    title: "Saad | CS Student & Full-Stack Web Developer",
-    description: "CS student building web applications, POS platforms, and management systems. Explore projects, engineering case studies, and skills.",
+    title: "Saad | Full-Stack Web Developer",
+    description: "Full-stack developer building web applications, POS platforms, and management systems. Explore projects, engineering case studies, and skills.",
     type: "website",
     locale: "en_US",
     siteName: "Saad Portfolio",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Saad | CS Student & Full-Stack Web Developer",
+    title: "Saad | Full-Stack Web Developer",
     description: "CS student building web applications, POS platforms, and management systems. Explore projects, engineering case studies, and skills.",
   },
   robots: {

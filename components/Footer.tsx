@@ -14,7 +14,7 @@ export default function Footer() {
 
         {/* Right GitHub Repo link */}
         <a
-          href="https://github.com/Saad-Software-Engineer/Personal-Portfolio"
+          href="https://github.com/code-with-saad/Personal-Portfolio"
           target="_blank"
           rel="noopener noreferrer"
           className="inline-flex items-center gap-1.5 text-slate-400 hover:text-emerald-400 transition-colors"
