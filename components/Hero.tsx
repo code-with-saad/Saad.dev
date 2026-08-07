@@ -30,7 +30,7 @@ const CODE_LINES = [
   { indent: 2, text: '"Node.js", "MongoDB",', color: "text-emerald-400" },
   { indent: 2, text: '"PHP", "MySQL",', color: "text-emerald-400" },
   { indent: 1, text: "],", color: "text-slate-300" },
-  { indent: 1, text: 'status: "Open to internships",', color: "text-teal-300" },
+  { indent: 1, text: 'status: "Open to work",', color: "text-teal-300" },
   { indent: 0, text: "};", color: "text-slate-200" },
 ];
 

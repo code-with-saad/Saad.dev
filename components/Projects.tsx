@@ -17,6 +17,8 @@ interface Project {
   stack: string[];
   techDecision: string;
   image: string;
+  // Stack of 3 images (1 real screenshot + 2 generated placeholders)
+  images: string[];
   liveUrl: string;
   githubUrl: string;
 }
@@ -38,6 +40,12 @@ const projects: Project[] = [
     techDecision:
       "Chosen for its flexible document schema allowing dynamic menu item modifiers and sub-second JSON response payloads.",
     image: "/projects/dinepine.png",
+    // Image stack: [0] = Real screenshot, [1] & [2] = Generated placeholder UI screens
+    images: [
+      "/projects/dinepine.png", // Real working screenshot
+      "/projects/dinepine_dash.png", // [PLACEHOLDER] Generated Order Dashboard UI
+      "/projects/dinepine_bill.png", // [PLACEHOLDER] Generated Billing & Receipt UI
+    ],
     liveUrl: "https://dinepine-pos.vercel.app",
     githubUrl: "https://github.com/code-with-saad/POS",
   },
@@ -56,6 +64,12 @@ const projects: Project[] = [
     techDecision:
       "Vanilla JS eliminated framework bundle overhead, guaranteeing sub-100ms LCP on low-tier mobile hardware.",
     image: "/projects/a1uniforms.png",
+    // Image stack: [0] = Real screenshot, [1] & [2] = Generated placeholder UI screens
+    images: [
+      "/projects/a1uniforms.png", // Real working screenshot
+      "/projects/a1uniforms_grid.png", // [PLACEHOLDER] Generated Product Grid UI
+      "/projects/a1uniforms_filter.png", // [PLACEHOLDER] Generated Filter Drawer UI
+    ],
     liveUrl: "https://a1uniforms.vercel.app",
     githubUrl: "https://github.com/code-with-saad/E-PROJECT",
   },
@@ -74,6 +88,12 @@ const projects: Project[] = [
     techDecision:
       "MySQL relational schema enforced strict foreign key constraints and ACID transactional integrity across appointment centers.",
     image: "/projects/covidcare.png",
+    // Image stack: [0] = Real screenshot, [1] & [2] = Generated placeholder UI screens
+    images: [
+      "/projects/covidcare.png", // Real working screenshot
+      "/projects/covidcare_form.png", // [PLACEHOLDER] Generated Appointment Booking UI
+      "/projects/covidcare_admin.png", // [PLACEHOLDER] Generated Hospital Admin Panel UI
+    ],
     liveUrl: "https://covid-care.infinityfree.io",
     githubUrl: "https://github.com/code-with-saad/Covid-Care",
   },
@@ -105,7 +125,9 @@ function CaseStudyModal({
   useEffect(() => {
     document.body.style.overflow = "hidden";
     closeRef.current?.focus();
-    return () => { document.body.style.overflow = ""; };
+    return () => {
+      document.body.style.overflow = "";
+    };
   }, []);
 
   // Focus trap
@@ -121,9 +143,15 @@ function CaseStudyModal({
       const first = focusable[0];
       const last = focusable[focusable.length - 1];
       if (e.shiftKey) {
-        if (document.activeElement === first) { e.preventDefault(); last.focus(); }
+        if (document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        }
       } else {
-        if (document.activeElement === last) { e.preventDefault(); first.focus(); }
+        if (document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
       }
     },
     []
@@ -137,7 +165,7 @@ function CaseStudyModal({
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 0.25, ease: "easeOut" }}
-        className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm"
+        className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm pointer-events-auto"
         onClick={onClose}
         aria-hidden="true"
       />
@@ -267,28 +295,56 @@ function ProjectCard({
         "bg-slate-900/60 backdrop-blur-md",
         "border border-slate-800/90",
         "shadow-md",
-        // ↓ transition defined on BASE class — ensures smooth in AND out
         "transition-all duration-300 ease-out",
         "hover:border-emerald-500/50",
         "hover:shadow-lg hover:shadow-emerald-500/10",
         "hover:-translate-y-1",
       ].join(" ")}
     >
-      {/* ── Image ── */}
-      <div className="relative aspect-video w-full overflow-hidden bg-slate-950">
-        <Image
-          src={project.image}
-          alt={`${project.title} screenshot`}
-          fill
-          sizes="(max-width: 768px) 100vw, 50vw"
-          // transition on BASE class — smooth scale both in and out
-          className="object-cover object-top transition-transform duration-500 ease-out group-hover:scale-105"
-          priority={index === 0}
-        />
-        {/* dim overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-slate-950/60 via-transparent to-transparent pointer-events-none" />
-        {/* category badge pinned to image bottom-left */}
-        <span className="absolute bottom-3 left-3 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 backdrop-blur-sm">
+      {/* ── 3-Image Stack Preview Container ── */}
+      <div className="relative aspect-video w-full overflow-hidden bg-slate-950 p-3 sm:p-4 flex items-center justify-center">
+        <div className="relative w-full h-full max-w-[92%]">
+
+          {/* Image 3 (Bottom/Right layer) — Hidden under 480px (min-[480px]:block) */}
+          <div className="hidden min-[480px]:block absolute inset-0 rounded-xl overflow-hidden border border-slate-800/80 shadow-md transform transition-transform duration-300 ease-out z-10 translate-y-1 rotate-[1deg] min-[480px]:group-hover:translate-x-3 min-[480px]:group-hover:-translate-y-1 min-[480px]:group-hover:rotate-[3deg]">
+            <Image
+              src={project.images[2]}
+              alt={`${project.title} secondary screen preview 2`}
+              fill
+              sizes="(max-width: 768px) 100vw, 50vw"
+              className="object-cover object-top opacity-60 min-[480px]:group-hover:opacity-85 transition-opacity duration-300"
+            />
+          </div>
+
+          {/* Image 2 (Middle/Left layer) — Hidden under 480px (min-[480px]:block) */}
+          <div className="hidden min-[480px]:block absolute inset-0 rounded-xl overflow-hidden border border-slate-800/80 shadow-md transform transition-transform duration-300 ease-out z-20 translate-y-0.5 -rotate-[1deg] min-[480px]:group-hover:-translate-x-3 min-[480px]:group-hover:-translate-y-1 min-[480px]:group-hover:-rotate-[3deg]">
+            <Image
+              src={project.images[1]}
+              alt={`${project.title} secondary screen preview 1`}
+              fill
+              sizes="(max-width: 768px) 100vw, 50vw"
+              className="object-cover object-top opacity-70 min-[480px]:group-hover:opacity-90 transition-opacity duration-300"
+            />
+          </div>
+
+          {/* Image 1 (Top/Main layer) — Always visible, lifts up -5px & rotates 1deg on hover above 480px */}
+          <div className="absolute inset-0 rounded-xl overflow-hidden border border-slate-800 shadow-xl z-30 transform transition-all duration-300 ease-out min-[480px]:group-hover:-translate-y-1.5 min-[480px]:group-hover:rotate-[1deg] group-hover:border-emerald-500/30 group-hover:shadow-emerald-500/10">
+            <Image
+              src={project.images[0]}
+              alt={`${project.title} main screenshot`}
+              fill
+              sizes="(max-width: 768px) 100vw, 50vw"
+              className="object-cover object-top transition-transform duration-500 ease-out group-hover:scale-105"
+              priority={index === 0}
+            />
+            {/* dim gradient overlay */}
+            <div className="absolute inset-0 bg-gradient-to-t from-slate-950/60 via-transparent to-transparent pointer-events-none" />
+          </div>
+
+        </div>
+
+        {/* category badge pinned to top container bottom-left */}
+        <span className="absolute bottom-3 left-3 z-40 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 backdrop-blur-sm">
           {project.category}
         </span>
       </div>
