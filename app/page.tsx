@@ -10,7 +10,7 @@ import LoadingScreen from "@/components/LoadingScreen";
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-[#090d16] text-slate-100 selection:bg-emerald-500/30 selection:text-emerald-300 relative">
+    <div className="min-h-screen text-slate-100 selection:bg-emerald-500/30 selection:text-emerald-300 relative">
       <LoadingScreen />
       <AnimatedBackground />
       <Navbar />

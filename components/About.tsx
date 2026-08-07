@@ -5,7 +5,7 @@ import { GraduationCap, BookOpen, Code2, Rocket, CheckCircle2 } from "lucide-rea
 
 export default function About() {
   return (
-    <section id="about" className="py-20 px-4 sm:px-6 lg:px-8 bg-[#0b101d] border-y border-slate-800/60">
+    <section id="about" className="py-20 px-4 sm:px-6 lg:px-8 bg-[#0b101d]/70 border-y border-slate-800/60">
       <div className="max-w-4xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

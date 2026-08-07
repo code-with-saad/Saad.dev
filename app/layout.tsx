@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import ParticleBackground from "@/components/ParticleBackground";
 
 const inter = Inter({ subsets: ["latin"], display: "swap" });
 
@@ -35,6 +36,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.className} scroll-smooth dark`}>
       <body className="min-h-screen bg-[#090d16] text-slate-100 antialiased selection:bg-emerald-500/30 selection:text-emerald-300">
+        <ParticleBackground />
         {children}
       </body>
     </html>

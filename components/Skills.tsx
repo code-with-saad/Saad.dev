@@ -57,7 +57,7 @@ const skillCategories: SkillCategory[] = [
 
 export default function Skills() {
   return (
-    <section id="skills" className="py-20 px-4 sm:px-6 lg:px-8 bg-[#0b101d] border-t border-slate-800/60">
+    <section id="skills" className="py-20 px-4 sm:px-6 lg:px-8 bg-[#0b101d]/70 border-t border-slate-800/60">
       <div className="max-w-5xl mx-auto space-y-12">
         {/* Section Header */}
         <motion.div
