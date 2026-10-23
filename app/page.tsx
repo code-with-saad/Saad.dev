@@ -1,24 +1,7 @@
-import Sidebar from "@/components/Sidebar";
+import SectionBar from "@/components/SectionBar";
 import SectionShell from "@/components/SectionShell";
-
-const SECTIONS = [
-  { id: "intro", index: "00", label: "INTRO", title: "Intro" },
-  { id: "about", index: "01", label: "ABOUT", title: "About" },
-  {
-    id: "work",
-    index: "02",
-    label: "SELECTED WORK",
-    title: "Selected work",
-  },
-  {
-    id: "experience",
-    index: "03",
-    label: "EXPERIENCE",
-    title: "Experience",
-  },
-  { id: "stack", index: "04", label: "STACK", title: "Stack" },
-  { id: "contact", index: "05", label: "CONTACT", title: "Contact" },
-];
+import Sidebar from "@/components/Sidebar";
+import { SECTIONS } from "@/data/sections";
 
 export default function Home() {
   return (
@@ -26,17 +9,13 @@ export default function Home() {
       <Sidebar />
 
       <main id="main-content" className="min-[900px]:ml-80">
+        <SectionBar />
+
         <div className="min-[900px]:pl-[78px] min-[900px]:pr-10">
           <div className="mx-auto max-w-[900px] px-5 py-8 min-[900px]:mx-0 min-[900px]:px-0 min-[900px]:py-20">
             <div className="divide-y divide-line">
-              {SECTIONS.map((section) => (
-                <SectionShell
-                  key={section.id}
-                  id={section.id}
-                  index={section.index}
-                  label={section.label}
-                  title={section.title}
-                />
+              {SECTIONS.map(({ id, index, label }) => (
+                <SectionShell key={id} id={id} index={index} label={label} />
               ))}
             </div>
           </div>

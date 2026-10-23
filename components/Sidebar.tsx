@@ -2,7 +2,9 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { Download, Menu, Search, X } from "lucide-react";
+import { LuDownload, LuMenu, LuSearch, LuX } from "react-icons/lu";
+import { SECTIONS } from "@/data/sections";
+import { useActiveSection } from "@/hooks/useActiveSection";
 import ThemeToggle from "./ThemeToggle";
 
 const NAME = "Muhammad Saad";
@@ -11,15 +13,6 @@ const ROLE = "SOFTWARE ENGINEER";
 const GITHUB_URL = "https://github.com/code-with-saad";
 const LINKEDIN_URL = "https://www.linkedin.com/in/codewithsaad";
 const RESUME_URL = "/resume.pdf";
-
-const NAV_ITEMS = [
-  { id: "intro", index: "00", label: "Intro" },
-  { id: "about", index: "01", label: "About" },
-  { id: "work", index: "02", label: "Selected work" },
-  { id: "experience", index: "03", label: "Experience" },
-  { id: "stack", index: "04", label: "Stack" },
-  { id: "contact", index: "05", label: "Contact" },
-];
 
 type NavListProps = {
   active: string;
@@ -30,7 +23,7 @@ type NavListProps = {
 function NavList({ active, size = "md", onNavigate }: NavListProps) {
   return (
     <ul className="space-y-0.5">
-      {NAV_ITEMS.map((item) => {
+      {SECTIONS.map((item) => {
         const isActive = active === item.id;
 
         return (
@@ -40,7 +33,7 @@ function NavList({ active, size = "md", onNavigate }: NavListProps) {
               onClick={() => onNavigate?.(item.id)}
               aria-current={isActive ? "location" : undefined}
               className={`group relative flex items-center gap-4 pl-10 ${
-                size === "lg" ? "py-3" : "py-1.5"
+                size === "lg" ? "py-3" : "py-1"
               }`}
             >
               <span
@@ -77,7 +70,7 @@ function Portrait() {
   const [failed, setFailed] = useState(false);
 
   return (
-    <div className="relative w-[128px]">
+    <div className="relative w-[168px]">
       <div
         aria-hidden="true"
         className="absolute -bottom-2 -right-2 h-full w-full rounded-2xl bg-accent"
@@ -85,7 +78,7 @@ function Portrait() {
       <div className="relative aspect-square w-full overflow-hidden rounded-2xl border border-line bg-surface-2">
         {failed ? (
           <div className="flex h-full w-full items-center justify-center">
-            <span className="font-display text-3xl font-extrabold tracking-tight text-accent">
+            <span className="font-display text-4xl font-extrabold tracking-tight text-accent">
               MS
             </span>
           </div>
@@ -93,8 +86,10 @@ function Portrait() {
           <Image
             src="/saad.jpg"
             alt="Portrait of Muhammad Saad"
-            width={128}
-            height={128}
+            width={336}
+            height={336}
+            quality={90}
+            loading="eager"
             onError={() => setFailed(true)}
             className="h-full w-full object-cover"
           />
@@ -131,8 +126,8 @@ function SidebarActions() {
           download
           className="inline-flex h-10 flex-1 items-center justify-center gap-2 rounded-lg border border-line bg-surface-2 px-3 text-[13px] font-medium text-ink transition-colors hover:bg-line focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-canvas"
         >
-          <Download className="h-4 w-4" aria-hidden="true" />
-          Résumé PDF
+          <LuDownload className="h-4 w-4" aria-hidden="true" />
+          Resume PDF
         </a>
         <ThemeToggle />
       </div>
@@ -141,62 +136,10 @@ function SidebarActions() {
 }
 
 export default function Sidebar() {
-  const [active, setActive] = useState("intro");
+  const [active, setActive] = useActiveSection();
   const [menuOpen, setMenuOpen] = useState(false);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
-
-  useEffect(() => {
-    const sections = NAV_ITEMS.map((item) =>
-      document.getElementById(item.id)
-    ).filter((section): section is HTMLElement => section !== null);
-
-    const ratios = new Map<string, number>();
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          ratios.set(
-            entry.target.id,
-            entry.isIntersecting ? entry.intersectionRatio : 0
-          );
-        });
-
-        let next = "";
-        let best = 0;
-
-        NAV_ITEMS.forEach(({ id }) => {
-          const ratio = ratios.get(id) ?? 0;
-          if (ratio > best) {
-            best = ratio;
-            next = id;
-          }
-        });
-
-        if (next) setActive(next);
-      },
-      {
-        rootMargin: "-12% 0px -60% 0px",
-        threshold: [0, 0.2, 0.4, 0.6, 0.8, 1],
-      }
-    );
-
-    sections.forEach((section) => observer.observe(section));
-
-    const handleScroll = () => {
-      const atBottom =
-        window.innerHeight + window.scrollY >=
-        document.documentElement.scrollHeight - 2;
-      if (atBottom) setActive("contact");
-    };
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-
-    return () => {
-      observer.disconnect();
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, []);
 
   useEffect(() => {
     if (!menuOpen) return;
@@ -243,12 +186,12 @@ export default function Sidebar() {
         <a
           href="#intro"
           aria-label="Muhammad Saad, back to intro"
-          className="block w-[128px] rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-4 focus-visible:ring-offset-canvas"
+          className="block w-[168px] rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-4 focus-visible:ring-offset-canvas"
         >
           <Portrait />
         </a>
 
-        <h1 className="mt-7 font-display text-[40px] font-extrabold leading-[0.98] tracking-[-0.045em] text-ink">
+        <h1 className="mt-4 font-display text-[40px] font-extrabold leading-[0.98] tracking-[-0.045em] text-ink">
           {NAME_LINES.map((line) => (
             <span key={line} className="block">
               {line}
@@ -260,7 +203,7 @@ export default function Sidebar() {
           {ROLE}
         </p>
 
-        <div className="mt-6">
+        <div className="mt-4">
           <span className="inline-flex items-center gap-2 rounded-full border border-line px-3 py-1.5 text-xs font-medium text-ink">
             <span
               aria-hidden="true"
@@ -272,20 +215,20 @@ export default function Sidebar() {
 
         <div
           aria-hidden="true"
-          className="mt-6 flex h-10 items-center gap-2 rounded-lg border border-line bg-surface px-3 text-sm text-muted"
+          className="mt-5 flex h-10 items-center gap-2 rounded-lg border border-line bg-surface px-3 text-sm text-muted"
         >
-          <Search className="h-4 w-4 shrink-0" />
+          <LuSearch className="h-4 w-4 shrink-0" />
           <span className="flex-1 truncate">Search</span>
           <kbd className="rounded border border-line bg-canvas px-1.5 py-0.5 font-mono text-[10px] leading-none text-muted">
-            ⌘K
+            Ctrl K
           </kbd>
         </div>
 
-        <nav aria-label="Sections" className="mt-10">
+        <nav aria-label="Sections" className="mt-6">
           <NavList active={active} onNavigate={navigate} />
         </nav>
 
-        <div className="mt-auto pt-10">
+        <div className="mt-auto pt-6">
           <SidebarActions />
         </div>
       </aside>
@@ -311,7 +254,7 @@ export default function Sidebar() {
               aria-controls="mobile-navigation"
               className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-line text-ink transition-colors hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-canvas"
             >
-              <Menu className="h-4 w-4" aria-hidden="true" />
+              <LuMenu className="h-4 w-4" aria-hidden="true" />
             </button>
           </div>
         </div>
@@ -337,7 +280,7 @@ export default function Sidebar() {
                 aria-label="Close navigation"
                 className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-line text-ink transition-colors hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-canvas"
               >
-                <X className="h-4 w-4" aria-hidden="true" />
+                <LuX className="h-4 w-4" aria-hidden="true" />
               </button>
             </div>
           </div>

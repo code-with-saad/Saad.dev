@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useSyncExternalStore } from "react";
-import { Moon, Sun } from "lucide-react";
+import { LuMoon, LuSun } from "react-icons/lu";
 
 type Theme = "dark" | "light";
 
@@ -91,13 +91,13 @@ export default function ThemeToggle({ className = "" }: { className?: string }) 
       className={`inline-flex h-10 w-10 items-center justify-center rounded-full border border-line text-ink transition-colors hover:border-line-strong hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-canvas ${className}`}
     >
       {theme === "dark" ? (
-        <Sun
+        <LuSun
           className="h-4 w-4"
           strokeWidth={1.75}
           aria-hidden="true"
         />
       ) : (
-        <Moon
+        <LuMoon
           className="h-4 w-4"
           strokeWidth={1.75}
           aria-hidden="true"

@@ -154,6 +154,28 @@
   background: var(--muted);
 }
 
+.section-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: var(--line-strong) var(--line);
+}
+
+.section-scroll::-webkit-scrollbar {
+  height: 4px;
+}
+
+.section-scroll::-webkit-scrollbar-track {
+  background: var(--line);
+}
+
+.section-scroll::-webkit-scrollbar-thumb {
+  background: var(--line-strong);
+  border-radius: 999px;
+}
+
+.section-scroll::-webkit-scrollbar-thumb:hover {
+  background: var(--muted);
+}
+
 .theme-switching,
 .theme-switching *,
 .theme-switching *::before,
