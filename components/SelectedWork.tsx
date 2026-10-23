@@ -1,8 +1,14 @@
 "use client";
 
-import { Fragment, useState, type ReactNode } from "react";
+import {
+  Fragment,
+  useState,
+  type CSSProperties,
+  type ReactNode,
+} from "react";
 import Image from "next/image";
-import { LuArrowDown, LuArrowUpRight } from "react-icons/lu";
+import { LuArrowUpRight, LuChevronDown } from "react-icons/lu";
+import Reveal from "@/components/Reveal";
 import { PROJECTS, type Project } from "@/data/projects";
 
 type FilterId = "all" | "live" | "full-stack" | "saas" | "earlier";
@@ -62,7 +68,7 @@ function MediaContent({ project, sizes }: { project: Project; sizes: string }) {
       fill
       sizes={sizes}
       quality={90}
-      className="object-cover object-top"
+      className="object-contain object-center transition-transform duration-700 ease-out group-hover:scale-[1.015]"
     />
   );
 }
@@ -73,16 +79,20 @@ function TechTags({ tech, limit }: { tech: string[]; limit?: number }) {
 
   return (
     <ul className="mt-5 flex flex-wrap gap-2">
-      {visible.map((item) => (
+      {visible.map((item, index) => (
         <li
           key={item}
-          className="rounded border border-line px-2 py-1 font-mono text-[10px] leading-none text-muted transition-colors hover:border-accent hover:text-accent"
+          style={{ "--tag-index": index } as CSSProperties}
+          className="tech-tag rounded border border-line px-2 py-1 font-mono text-[10px] leading-none text-muted transition-[color,border-color,translate] duration-200 ease-out hover:-translate-y-0.5 hover:border-accent hover:text-accent"
         >
           {item}
         </li>
       ))}
       {rest > 0 && (
-        <li className="rounded border border-line px-2 py-1 font-mono text-[10px] leading-none text-muted">
+        <li
+          style={{ "--tag-index": visible.length } as CSSProperties}
+          className="tech-tag rounded border border-line px-2 py-1 font-mono text-[10px] leading-none text-muted"
+        >
           +{rest}
         </li>
       )}
@@ -120,13 +130,25 @@ function CardLink({
   );
 }
 
-function FeaturedCard({ project }: { project: Project }) {
+function FeaturedCard({
+  project,
+  imageRight,
+}: {
+  project: Project;
+  imageRight: boolean;
+}) {
   return (
     <CardLink
       project={project}
-      className="group block overflow-hidden rounded-xl border border-line transition-colors hover:border-accent focus-visible:border-accent min-[1180px]:grid min-[1180px]:grid-cols-2"
+      className="group block h-full overflow-hidden rounded-xl border border-line transition-[border-color,translate] duration-300 ease-out hover:-translate-y-1 hover:border-accent focus-visible:border-accent min-[1180px]:grid min-[1180px]:grid-cols-2"
     >
-      <div className="relative aspect-[16/10] w-full overflow-hidden border-b border-line bg-surface min-[1180px]:aspect-auto min-[1180px]:border-b-0 min-[1180px]:border-r">
+      <div
+        className={`relative aspect-[16/10] w-full overflow-hidden border-b border-line bg-surface min-[1180px]:aspect-auto min-[1180px]:border-b-0 ${
+          imageRight
+            ? "min-[1180px]:order-2 min-[1180px]:border-l"
+            : "min-[1180px]:border-r"
+        }`}
+      >
         <MediaContent
           project={project}
           sizes="(min-width: 1180px) 450px, 100vw"
@@ -167,7 +189,7 @@ function ProjectCard({ project }: { project: Project }) {
   return (
     <CardLink
       project={project}
-      className="group flex h-full flex-col overflow-hidden rounded-xl border border-line transition-colors hover:border-accent focus-visible:border-accent"
+      className="group flex h-full flex-col overflow-hidden rounded-xl border border-line transition-[border-color,translate] duration-300 ease-out hover:-translate-y-1 hover:border-accent focus-visible:border-accent"
     >
       <div className="relative aspect-[16/10] w-full overflow-hidden border-b border-line bg-surface">
         <MediaContent
@@ -210,29 +232,62 @@ function ProjectCard({ project }: { project: Project }) {
 }
 
 function HardCalls({ project }: { project: Project }) {
+  const [open, setOpen] = useState(true);
+
   if (!project.hardCalls?.length) return null;
 
-  return (
-    <div>
-      <h4 className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.16em] text-muted">
-        The hard calls for {project.name}
-        <LuArrowDown className="h-3.5 w-3.5" aria-hidden="true" />
-      </h4>
+  const panelId = `hard-calls-${project.slug}`;
 
-      <ul className="mt-5 space-y-4">
-        {project.hardCalls.map((call) => (
-          <li key={call.title} className="flex gap-3">
-            <span
-              aria-hidden="true"
-              className="mt-[9px] h-1.5 w-1.5 shrink-0 bg-accent"
-            />
-            <p className="text-[15px] leading-[1.65] text-muted">
-              <strong className="font-semibold text-ink">{call.title}:</strong>{" "}
-              {call.body}
-            </p>
-          </li>
-        ))}
-      </ul>
+  return (
+    <div className="border-t border-line pt-5">
+      <button
+        type="button"
+        aria-expanded={open}
+        aria-controls={panelId}
+        onClick={() => setOpen((value) => !value)}
+        className="group flex w-full items-center justify-between gap-4 rounded text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-canvas"
+      >
+        <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-muted transition-colors group-hover:text-ink">
+          The hard calls for {project.name}
+        </span>
+        <span
+          aria-hidden="true"
+          className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-line text-muted transition-[color,border-color] duration-300 group-hover:border-line-strong group-hover:text-ink"
+        >
+          <LuChevronDown
+            className={`h-3.5 w-3.5 transition-transform duration-300 ease-out ${
+              open ? "rotate-0" : "-rotate-90"
+            }`}
+          />
+        </span>
+      </button>
+
+      <div
+        id={panelId}
+        aria-hidden={!open}
+        className={`grid transition-[grid-template-rows,opacity] duration-300 ease-out ${
+          open ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
+        }`}
+      >
+        <div className="overflow-hidden">
+          <ul className="mt-5 space-y-4">
+            {project.hardCalls.map((call) => (
+              <li key={call.title} className="flex gap-3">
+                <span
+                  aria-hidden="true"
+                  className="mt-[9px] h-1.5 w-1.5 shrink-0 bg-accent"
+                />
+                <p className="text-[15px] leading-[1.65] text-muted">
+                  <strong className="font-semibold text-ink">
+                    {call.title}:
+                  </strong>{" "}
+                  {call.body}
+                </p>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
     </div>
   );
 }
@@ -246,25 +301,35 @@ export default function SelectedWork() {
     (project) => project.group === "earlier"
   );
 
+  const featuredPositions = new Map<string, number>();
+  mainProjects
+    .filter((project) => project.featured)
+    .forEach((project, index) => featuredPositions.set(project.slug, index));
+
   return (
     <section
       id="work"
       aria-labelledby="work-title"
       className="scroll-mt-[89px] py-20 min-[900px]:scroll-mt-8 min-[900px]:py-24"
     >
-      <div className="flex items-center gap-3">
-        <span aria-hidden="true" className="h-px w-8 bg-accent" />
-        <p className="eyebrow text-accent">02 / Selected work</p>
-      </div>
+      <Reveal>
+        <div className="flex items-center gap-3">
+          <span aria-hidden="true" className="h-px w-8 bg-accent" />
+          <p className="eyebrow text-accent">02 / Selected work</p>
+        </div>
 
-      <h2
-        id="work-title"
-        className="mt-6 font-display text-[clamp(2.25rem,6vw,3.75rem)] font-extrabold leading-[1.03] tracking-[-0.035em] text-ink"
+        <h2
+          id="work-title"
+          className="mt-6 font-display text-[clamp(2.25rem,6vw,3.75rem)] font-extrabold leading-[1.03] tracking-[-0.035em] text-ink"
+        >
+          Built it. Shipped it. Still running it.
+        </h2>
+      </Reveal>
+
+      <Reveal
+        delay={80}
+        className="mt-8 flex flex-wrap items-center justify-between gap-4"
       >
-        Built it. Shipped it. Still running it.
-      </h2>
-
-      <div className="mt-8 flex flex-wrap items-center justify-between gap-4">
         <div
           role="group"
           aria-label="Filter projects"
@@ -279,7 +344,7 @@ export default function SelectedWork() {
                 type="button"
                 aria-pressed={active}
                 onClick={() => setFilter(item.id)}
-                className={`inline-flex h-9 items-center gap-2.5 rounded-full border px-3.5 font-mono text-[12px] tracking-[0.01em] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-canvas ${
+                className={`inline-flex h-9 items-center gap-2.5 rounded-full border px-3.5 font-mono text-[12px] tracking-[0.01em] transition-[background-color,border-color,color,scale] duration-200 ease-out active:scale-[0.96] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-canvas ${
                   active
                     ? "border-ink bg-ink text-canvas"
                     : "border-line text-muted hover:border-line-strong hover:text-ink"
@@ -308,23 +373,38 @@ export default function SelectedWork() {
           Showing {visible.length}{" "}
           {visible.length === 1 ? "project" : "projects"}
         </p>
-      </div>
+      </Reveal>
 
       {mainProjects.length > 0 && (
-        <ul className="mt-10 grid grid-cols-1 gap-x-6 gap-y-12 min-[1180px]:grid-cols-2">
-          {mainProjects.map((project) => (
+        <ul
+          key={filter}
+          className="mt-10 grid grid-cols-1 gap-x-6 gap-y-12 min-[1180px]:grid-cols-2"
+        >
+          {mainProjects.map((project, index) => (
             <Fragment key={project.slug}>
               <li className={project.featured ? "min-[1180px]:col-span-2" : ""}>
-                {project.featured ? (
-                  <FeaturedCard project={project} />
-                ) : (
-                  <ProjectCard project={project} />
-                )}
+                <Reveal
+                  className="reveal-card h-full"
+                  delay={(index % 2) * 80}
+                >
+                  {project.featured ? (
+                    <FeaturedCard
+                      project={project}
+                      imageRight={
+                        (featuredPositions.get(project.slug) ?? 0) % 2 === 1
+                      }
+                    />
+                  ) : (
+                    <ProjectCard project={project} />
+                  )}
+                </Reveal>
               </li>
 
               {project.hardCalls?.length ? (
                 <li className="min-[1180px]:col-span-2">
-                  <HardCalls project={project} />
+                  <Reveal className="reveal-card" delay={60}>
+                    <HardCalls project={project} />
+                  </Reveal>
                 </li>
               ) : null}
             </Fragment>
@@ -338,11 +418,21 @@ export default function SelectedWork() {
             mainProjects.length > 0 ? "mt-16" : "mt-12"
           }`}
         >
-          <p className="eyebrow text-muted">Earlier work</p>
-          <ul className="mt-6 grid grid-cols-1 gap-x-6 gap-y-12 min-[1180px]:grid-cols-2">
-            {earlierProjects.map((project) => (
+          <Reveal>
+            <p className="eyebrow text-muted">Earlier work</p>
+          </Reveal>
+          <ul
+            key={filter}
+            className="mt-6 grid grid-cols-1 gap-x-6 gap-y-12 min-[1180px]:grid-cols-2"
+          >
+            {earlierProjects.map((project, index) => (
               <li key={project.slug}>
-                <ProjectCard project={project} />
+                <Reveal
+                  className="reveal-card h-full"
+                  delay={(index % 2) * 80}
+                >
+                  <ProjectCard project={project} />
+                </Reveal>
               </li>
             ))}
           </ul>
