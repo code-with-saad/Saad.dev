@@ -12,6 +12,7 @@ export interface Project {
   live: string | null;
   github: string | null;
   caseStudy?: string;
+  hardCalls?: { title: string; body: string }[];
   featured: boolean;
   group: ProjectGroup;
 }
@@ -21,7 +22,7 @@ export const PROJECTS: Project[] = [
     slug: "palettero",
     name: "Palettero",
     categories: ["SaaS", "Full Stack"],
-    year: "TODO",
+    year: "2026",
     tagline: "Launched color and theme tool with AI palette suggestions",
     description:
       "A launched product for editing color themes, with AI palette suggestions and shareable links. Built for search and AI answer engines (AEO and GEO). Tested with Playwright and Vitest, shipped through GitHub Actions CI.",
@@ -42,9 +43,27 @@ export const PROJECTS: Project[] = [
       "Vitest",
       "GitHub Actions",
     ],
-    image: null,
+    image: "/projects/palettero.png",
     live: "https://app.palettero.workers.dev/",
     github: null,
+    hardCalls: [
+      {
+        title: "Cloudflare Workers and Workers AI",
+        body: "the app and the AI palette calls run on one edge runtime, with the landing page and share links served from the same deploy.",
+      },
+      {
+        title: "Supabase and PostgreSQL",
+        body: "themes and share links are stored in relational tables.",
+      },
+      {
+        title: "Playwright and Vitest in GitHub Actions",
+        body: "UI and unit tests run on every change before it ships.",
+      },
+      {
+        title: "SEO and AI answer engines (AEO and GEO) from day one",
+        body: "the landing page is written for search engines and AI answer engines, not only browser visitors.",
+      },
+    ],
     featured: true,
     group: "main",
   },
@@ -52,7 +71,7 @@ export const PROJECTS: Project[] = [
     slug: "dinepine",
     name: "DinePine",
     categories: ["SaaS", "Full Stack"],
-    year: "TODO",
+    year: "2026",
     tagline: "Restaurant POS SaaS",
     description:
       "Restaurant POS with cashier, kitchen and admin screens, from table orders to billing.",
@@ -67,7 +86,7 @@ export const PROJECTS: Project[] = [
     slug: "eventsphere",
     name: "EventSphere",
     categories: ["SaaS", "Full Stack"],
-    year: "TODO",
+    year: "2026",
     tagline: "Event and expo management SaaS",
     description:
       "Multi-role event and expo management SaaS, built with React, Node, Express and MongoDB.",
@@ -82,7 +101,7 @@ export const PROJECTS: Project[] = [
     slug: "nexoria",
     name: "Nexoria",
     categories: ["Full Stack", "Internship"],
-    year: "TODO",
+    year: "2026",
     tagline: "E-commerce with Stripe checkout",
     description:
       "E-commerce store with Stripe checkout and admin analytics. Built during the CodeAlpha internship.",
@@ -97,7 +116,7 @@ export const PROJECTS: Project[] = [
     slug: "huddle",
     name: "Huddle",
     categories: ["Full Stack", "Internship"],
-    year: "TODO",
+    year: "2026",
     tagline: "Project management with real-time updates",
     description:
       "Project management tool with real-time updates over WebSocket. Built during the CodeAlpha internship.",
@@ -112,7 +131,7 @@ export const PROJECTS: Project[] = [
     slug: "circl",
     name: "Circl",
     categories: ["Full Stack", "Internship"],
-    year: "TODO",
+    year: "2026",
     tagline: "Social platform",
     description:
       "Social platform with profiles, posts, comments, likes and follows. Built during the CodeAlpha internship.",
@@ -127,7 +146,7 @@ export const PROJECTS: Project[] = [
     slug: "marketlink",
     name: "MarketLink",
     categories: ["Full Stack"],
-    year: "TODO",
+    year: "2026",
     tagline: "Farmers market platform",
     description: "Farmers market platform built for TechWiz 7.",
     tech: ["React", "Node.js", "Express", "MongoDB"],
@@ -141,7 +160,7 @@ export const PROJECTS: Project[] = [
     slug: "a1uniforms",
     name: "A1 Uniforms",
     categories: ["Frontend"],
-    year: "TODO",
+    year: "2024",
     tagline: "Uniform catalog",
     description:
       "Responsive uniform catalog with client-side filtering across medical, school and workwear lines.",
@@ -156,7 +175,7 @@ export const PROJECTS: Project[] = [
     slug: "covidcare",
     name: "COVID Care",
     categories: ["Full Stack"],
-    year: "TODO",
+    year: "2025",
     tagline: "Vaccination management",
     description:
       "Vaccination management system for citizen scheduling, hospital dose allocation and certificate verification.",

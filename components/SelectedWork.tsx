@@ -1,26 +1,47 @@
 "use client";
 
-import { useState } from "react";
+import { Fragment, useState, type ReactNode } from "react";
 import Image from "next/image";
+import { LuArrowDown, LuArrowUpRight } from "react-icons/lu";
 import { PROJECTS, type Project } from "@/data/projects";
 
-const FILTERS = ["All", "Full Stack", "SaaS", "Internship", "Earlier"] as const;
+type FilterId = "all" | "live" | "full-stack" | "saas" | "earlier";
 
-type Filter = (typeof FILTERS)[number];
+const FILTERS: { id: FilterId; label: string; count: number }[] = [
+  { id: "all", label: "All", count: PROJECTS.length },
+  {
+    id: "live",
+    label: "Live",
+    count: PROJECTS.filter((project) => project.live).length,
+  },
+  {
+    id: "full-stack",
+    label: "Full Stack",
+    count: PROJECTS.filter((project) =>
+      project.categories.includes("Full Stack")
+    ).length,
+  },
+  {
+    id: "saas",
+    label: "SaaS",
+    count: PROJECTS.filter((project) =>
+      project.categories.includes("SaaS")
+    ).length,
+  },
+  {
+    id: "earlier",
+    label: "Earlier",
+    count: PROJECTS.filter((project) => project.group === "earlier").length,
+  },
+];
 
-const LINK_CLASS =
-  "font-mono text-[11px] uppercase tracking-[0.14em] text-muted underline decoration-line underline-offset-4 transition-colors hover:text-ink hover:decoration-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-canvas";
-
-function matches(project: Project, filter: Filter) {
-  if (filter === "All") return true;
-  if (filter === "Earlier") return project.group === "earlier";
-  return project.categories.includes(filter);
-}
-
-function metaText(project: Project) {
-  const category = project.categories[0];
-
-  return project.year === "TODO" ? category : `${category} · ${project.year}`;
+function matches(project: Project, filter: FilterId) {
+  if (filter === "all") return true;
+  if (filter === "live") return project.live !== null;
+  if (filter === "earlier") return project.group === "earlier";
+  return project.categories.includes(
+    filter === "full-stack" ? "Full Stack" : "SaaS"
+  );
 }
 
 function MediaContent({ project, sizes }: { project: Project; sizes: string }) {
@@ -55,7 +76,7 @@ function TechTags({ tech, limit }: { tech: string[]; limit?: number }) {
       {visible.map((item) => (
         <li
           key={item}
-          className="rounded border border-line px-2 py-1 font-mono text-[10px] leading-none text-muted"
+          className="rounded border border-line px-2 py-1 font-mono text-[10px] leading-none text-muted transition-colors hover:border-accent hover:text-accent"
         >
           {item}
         </li>
@@ -69,47 +90,42 @@ function TechTags({ tech, limit }: { tech: string[]; limit?: number }) {
   );
 }
 
-function ProjectLinks({ project }: { project: Project }) {
+function CardLink({
+  project,
+  className,
+  children,
+}: {
+  project: Project;
+  className: string;
+  children: ReactNode;
+}) {
+  const href = project.live ?? project.github;
+
+  if (!href) {
+    return <div className={className}>{children}</div>;
+  }
+
   return (
-    <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
-      {project.live && (
-        <a
-          href={project.live}
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label={`Live site for ${project.name}`}
-          className={LINK_CLASS}
-        >
-          Live
-        </a>
-      )}
-      {project.github && (
-        <a
-          href={project.github}
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label={`Code for ${project.name}`}
-          className={LINK_CLASS}
-        >
-          Code
-        </a>
-      )}
-      {project.caseStudy && (
-        <a
-          href={project.caseStudy}
-          aria-label={`Case study for ${project.name}`}
-          className={LINK_CLASS}
-        >
-          Case study
-        </a>
-      )}
-    </div>
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label={`${project.name}: open ${
+        project.live ? "live site" : "GitHub repository"
+      }`}
+      className={`${className} focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-canvas`}
+    >
+      {children}
+    </a>
   );
 }
 
 function FeaturedCard({ project }: { project: Project }) {
   return (
-    <article className="group overflow-hidden rounded-xl border border-line transition-colors hover:border-accent focus-within:border-accent min-[1180px]:grid min-[1180px]:grid-cols-2">
+    <CardLink
+      project={project}
+      className="group block overflow-hidden rounded-xl border border-line transition-colors hover:border-accent focus-visible:border-accent min-[1180px]:grid min-[1180px]:grid-cols-2"
+    >
       <div className="relative aspect-[16/10] w-full overflow-hidden border-b border-line bg-surface min-[1180px]:aspect-auto min-[1180px]:border-b-0 min-[1180px]:border-r">
         <MediaContent
           project={project}
@@ -118,87 +134,111 @@ function FeaturedCard({ project }: { project: Project }) {
       </div>
 
       <div className="flex flex-col justify-center p-6 min-[1180px]:p-8">
-        <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-accent">
-          {metaText(project)}
-        </p>
-        <h3 className="mt-2 font-display text-[28px] font-extrabold leading-[1.05] tracking-[-0.03em] text-ink min-[1180px]:text-[32px]">
+        <span className="inline-flex w-fit items-center gap-2 rounded-full border border-line px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.14em] text-muted">
+          <span
+            aria-hidden="true"
+            className="h-1.5 w-1.5 rounded-full bg-accent"
+          />
+          {project.categories[0]}
+        </span>
+
+        <h3 className="mt-4 flex items-start gap-2 font-display text-[28px] font-extrabold leading-[1.03] tracking-[-0.03em] text-accent min-[1180px]:text-[34px]">
           {project.name}
+          <LuArrowUpRight
+            className="mt-1 h-5 w-5 shrink-0"
+            aria-hidden="true"
+          />
         </h3>
-        <p className="mt-2 font-mono text-[11px] uppercase leading-relaxed tracking-[0.14em] text-accent">
+
+        <p className="mt-3 text-[14px] leading-relaxed text-ink">
           {project.tagline}
         </p>
-        <p className="mt-4 text-[16px] leading-[1.65] text-muted">
+        <p className="mt-3 text-[15px] leading-[1.65] text-muted">
           {project.description}
         </p>
+
         <TechTags tech={project.tech} />
-        <div className="mt-6">
-          <ProjectLinks project={project} />
-        </div>
       </div>
-    </article>
+    </CardLink>
   );
 }
 
 function ProjectCard({ project }: { project: Project }) {
   return (
-    <article className="group flex h-full flex-col">
-      <div className="relative aspect-[16/10] w-full overflow-hidden rounded-lg border border-line bg-surface transition-colors group-hover:border-accent group-focus-within:border-accent">
+    <CardLink
+      project={project}
+      className="group flex h-full flex-col overflow-hidden rounded-xl border border-line transition-colors hover:border-accent focus-visible:border-accent"
+    >
+      <div className="relative aspect-[16/10] w-full overflow-hidden border-b border-line bg-surface">
         <MediaContent
           project={project}
           sizes="(min-width: 1180px) 440px, 94vw"
         />
       </div>
 
-      <div className="mt-5 flex flex-1 flex-col">
-        <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-accent">
-          {metaText(project)}
+      <div className="flex flex-1 flex-col bg-surface p-5">
+        <div className="flex items-start justify-between gap-3">
+          <h3 className="flex items-start gap-1.5 font-display text-[21px] font-extrabold leading-[1.1] tracking-[-0.02em] text-ink">
+            {project.name}
+            <LuArrowUpRight
+              className="mt-1 h-4 w-4 shrink-0 text-muted transition-colors group-hover:text-accent"
+              aria-hidden="true"
+            />
+          </h3>
+          <span className="mt-1 inline-flex shrink-0 items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.14em] text-muted">
+            <span
+              aria-hidden="true"
+              className="h-1.5 w-1.5 rounded-full bg-accent"
+            />
+            {project.categories[0]}
+          </span>
+        </div>
+
+        <p className="mt-3 text-[13px] leading-relaxed text-ink">
+          {project.tagline}
         </p>
-        <h3 className="mt-2 font-display text-[22px] font-extrabold leading-tight tracking-[-0.02em] text-ink">
-          {project.name}
-        </h3>
         <p className="mt-2 line-clamp-2 text-[15px] leading-[1.6] text-muted">
           {project.description}
         </p>
-        <TechTags tech={project.tech} limit={6} />
-        <div className="mt-auto pt-5">
-          <ProjectLinks project={project} />
+
+        <div className="mt-auto">
+          <TechTags tech={project.tech} limit={6} />
         </div>
       </div>
-    </article>
+    </CardLink>
   );
 }
 
-function EarlierCard({ project }: { project: Project }) {
-  return (
-    <article className="group grid grid-cols-[112px_1fr] items-start gap-4 min-[640px]:grid-cols-[168px_1fr] min-[640px]:items-center min-[640px]:gap-6">
-      <div className="relative aspect-[16/10] w-full overflow-hidden rounded-lg border border-line bg-surface transition-colors group-hover:border-accent group-focus-within:border-accent">
-        <MediaContent
-          project={project}
-          sizes="(min-width: 640px) 168px, 112px"
-        />
-      </div>
+function HardCalls({ project }: { project: Project }) {
+  if (!project.hardCalls?.length) return null;
 
-      <div>
-        <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-accent">
-          {metaText(project)}
-        </p>
-        <h3 className="mt-1 font-display text-[19px] font-extrabold leading-tight tracking-[-0.02em] text-ink">
-          {project.name}
-        </h3>
-        <p className="mt-1 line-clamp-1 text-[14px] leading-[1.55] text-muted">
-          {project.description}
-        </p>
-        <TechTags tech={project.tech} limit={6} />
-        <div className="mt-3">
-          <ProjectLinks project={project} />
-        </div>
-      </div>
-    </article>
+  return (
+    <div>
+      <h4 className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.16em] text-muted">
+        The hard calls for {project.name}
+        <LuArrowDown className="h-3.5 w-3.5" aria-hidden="true" />
+      </h4>
+
+      <ul className="mt-5 space-y-4">
+        {project.hardCalls.map((call) => (
+          <li key={call.title} className="flex gap-3">
+            <span
+              aria-hidden="true"
+              className="mt-[9px] h-1.5 w-1.5 shrink-0 bg-accent"
+            />
+            <p className="text-[15px] leading-[1.65] text-muted">
+              <strong className="font-semibold text-ink">{call.title}:</strong>{" "}
+              {call.body}
+            </p>
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 }
 
 export default function SelectedWork() {
-  const [filter, setFilter] = useState<Filter>("All");
+  const [filter, setFilter] = useState<FilterId>("all");
 
   const visible = PROJECTS.filter((project) => matches(project, filter));
   const mainProjects = visible.filter((project) => project.group === "main");
@@ -217,8 +257,11 @@ export default function SelectedWork() {
         <p className="eyebrow text-accent">02 / Selected work</p>
       </div>
 
-      <h2 id="work-title" className="section-title mt-6">
-        Built it. Shipped it.
+      <h2
+        id="work-title"
+        className="mt-6 font-display text-[clamp(2.25rem,6vw,3.75rem)] font-extrabold leading-[1.03] tracking-[-0.035em] text-ink"
+      >
+        Built it. Shipped it. Still running it.
       </h2>
 
       <div className="mt-8 flex flex-wrap items-center justify-between gap-4">
@@ -228,30 +271,40 @@ export default function SelectedWork() {
           className="flex flex-wrap gap-2"
         >
           {FILTERS.map((item) => {
-            const active = filter === item;
+            const active = filter === item.id;
 
             return (
               <button
-                key={item}
+                key={item.id}
                 type="button"
                 aria-pressed={active}
-                onClick={() => setFilter(item)}
-                className={`rounded-full border px-3.5 py-1.5 font-mono text-[11px] uppercase tracking-[0.12em] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-canvas ${
+                onClick={() => setFilter(item.id)}
+                className={`inline-flex h-9 items-center gap-2.5 rounded-full border px-3.5 font-mono text-[12px] tracking-[0.01em] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-canvas ${
                   active
                     ? "border-ink bg-ink text-canvas"
                     : "border-line text-muted hover:border-line-strong hover:text-ink"
                 }`}
               >
-                {item}
+                {item.label}
+                <span
+                  aria-hidden="true"
+                  className={`h-4 w-px ${
+                    active ? "bg-canvas/30" : "bg-line"
+                  }`}
+                />
+                <span
+                  className={`text-[11px] ${
+                    active ? "text-canvas/70" : "text-muted"
+                  }`}
+                >
+                  {item.count}
+                </span>
               </button>
             );
           })}
         </div>
 
-        <p
-          aria-live="polite"
-          className="font-mono text-[10px] uppercase tracking-[0.16em] text-muted"
-        >
+        <p aria-live="polite" className="text-[12px] text-muted">
           Showing {visible.length}{" "}
           {visible.length === 1 ? "project" : "projects"}
         </p>
@@ -260,16 +313,21 @@ export default function SelectedWork() {
       {mainProjects.length > 0 && (
         <ul className="mt-10 grid grid-cols-1 gap-x-6 gap-y-12 min-[1180px]:grid-cols-2">
           {mainProjects.map((project) => (
-            <li
-              key={project.slug}
-              className={project.featured ? "min-[1180px]:col-span-2" : ""}
-            >
-              {project.featured ? (
-                <FeaturedCard project={project} />
-              ) : (
-                <ProjectCard project={project} />
-              )}
-            </li>
+            <Fragment key={project.slug}>
+              <li className={project.featured ? "min-[1180px]:col-span-2" : ""}>
+                {project.featured ? (
+                  <FeaturedCard project={project} />
+                ) : (
+                  <ProjectCard project={project} />
+                )}
+              </li>
+
+              {project.hardCalls?.length ? (
+                <li className="min-[1180px]:col-span-2">
+                  <HardCalls project={project} />
+                </li>
+              ) : null}
+            </Fragment>
           ))}
         </ul>
       )}
@@ -281,10 +339,10 @@ export default function SelectedWork() {
           }`}
         >
           <p className="eyebrow text-muted">Earlier work</p>
-          <ul className="mt-6 space-y-6">
+          <ul className="mt-6 grid grid-cols-1 gap-x-6 gap-y-12 min-[1180px]:grid-cols-2">
             {earlierProjects.map((project) => (
               <li key={project.slug}>
-                <EarlierCard project={project} />
+                <ProjectCard project={project} />
               </li>
             ))}
           </ul>
