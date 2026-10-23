@@ -1,3 +1,5 @@
+import Reveal from "@/components/Reveal";
+
 const STATS = [
   { value: "9", label: "PROJECTS SHIPPED" },
   { value: "3", label: "CODEALPHA PROJECTS" },
@@ -11,7 +13,7 @@ export default function Intro() {
       aria-labelledby="intro-title"
       className="scroll-mt-[89px] py-20 min-[900px]:scroll-mt-8 min-[900px]:py-24"
     >
-      <div className="fade-in">
+      <Reveal>
         <p className="eyebrow text-accent">
           Muhammad Saad · Software Engineer × Full Stack Architect · Karachi
         </p>
@@ -20,7 +22,9 @@ export default function Intro() {
           I build <span className="accent-underline">full stack products</span> and{" "}
           <span className="accent-underline">put them live</span>.
         </h2>
+      </Reveal>
 
+      <Reveal delay={120}>
         <p className="mt-7 max-w-[620px] text-[19px] leading-[1.65] text-pretty text-muted">
           Software engineering student at Aptech in Karachi. I build complete web
           apps with MERN and Postgres, from login and database to admin panel and
@@ -49,7 +53,7 @@ export default function Intro() {
             and Docker.
           </p>
         </div>
-      </div>
+      </Reveal>
     </section>
   );
 }

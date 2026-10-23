@@ -1,3 +1,5 @@
+import Reveal from "@/components/Reveal";
+
 type SectionShellProps = {
   id: string;
   index: string;
@@ -15,15 +17,17 @@ export default function SectionShell({
       aria-labelledby={`${id}-title`}
       className="scroll-mt-[89px] py-20 min-[900px]:scroll-mt-8 min-[900px]:py-24"
     >
-      <div className="flex items-center gap-3">
-        <span aria-hidden="true" className="h-px w-8 bg-accent" />
-        <p className="eyebrow text-accent">
-          {index} / {label}
-        </p>
-      </div>
-      <h2 id={`${id}-title`} className="section-title mt-6">
-        {label}
-      </h2>
+      <Reveal>
+        <div className="flex items-center gap-3">
+          <span aria-hidden="true" className="h-px w-8 bg-accent" />
+          <p className="eyebrow text-accent">
+            {index} / {label}
+          </p>
+        </div>
+        <h2 id={`${id}-title`} className="section-title mt-6">
+          {label}
+        </h2>
+      </Reveal>
     </section>
   );
 }

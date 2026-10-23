@@ -1,3 +1,5 @@
+import Reveal from "@/components/Reveal";
+
 export default function About() {
   return (
     <section
@@ -5,16 +7,21 @@ export default function About() {
       aria-labelledby="about-title"
       className="scroll-mt-[89px] py-20 min-[900px]:scroll-mt-8 min-[900px]:py-24"
     >
-      <div className="flex items-center gap-3">
-        <span aria-hidden="true" className="h-px w-8 bg-accent" />
-        <p className="eyebrow text-accent">01 / About</p>
-      </div>
+      <Reveal>
+        <div className="flex items-center gap-3">
+          <span aria-hidden="true" className="h-px w-8 bg-accent" />
+          <p className="eyebrow text-accent">01 / About</p>
+        </div>
 
-      <h2 id="about-title" className="section-title mt-6">
-        Learning by building real things.
-      </h2>
+        <h2 id="about-title" className="section-title mt-6">
+          Learning by building real things.
+        </h2>
+      </Reveal>
 
-      <div className="mt-7 max-w-[660px] space-y-5 text-[19px] leading-[1.65] text-pretty text-muted">
+      <Reveal
+        delay={90}
+        className="mt-7 max-w-[660px] space-y-5 text-[19px] leading-[1.65] text-pretty text-muted"
+      >
         <p>
           I&apos;m a software engineering student at Aptech in Karachi. Most of what I
           know comes from building{" "}
@@ -28,7 +35,7 @@ export default function About() {
           something impressive. Right now I&apos;m open to{" "}
           <strong className="text-ink">internships and full-time roles</strong>.
         </p>
-      </div>
+      </Reveal>
     </section>
   );
 }
