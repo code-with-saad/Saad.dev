@@ -1,87 +1,170 @@
+export type ProjectGroup = "main" | "earlier";
+
 export interface Project {
-  id: string;
-  title: string;
-  subtitle: string;
-  category: string;
-  shortDescription: string;
-  overview: string;
-  challengeSolution: string;
-  stack: string[];
-  techDecision: string;
-  image: string;
-  images: string[];
-  liveUrl: string;
-  githubUrl: string;
+  slug: string;
+  name: string;
+  categories: string[];
+  year: string;
+  tagline: string;
+  description: string;
+  tech: string[];
+  image: string | null;
+  live: string | null;
+  github: string | null;
+  caseStudy?: string;
+  featured: boolean;
+  group: ProjectGroup;
 }
 
-export const projects: Project[] = [
+export const PROJECTS: Project[] = [
   {
-    id: "dinepine",
-    title: "DinePine",
-    subtitle: "MERN Stack Restaurant POS System",
-    category: "Full Stack Development",
-    shortDescription:
-      "Full-stack restaurant point-of-sale system eliminating billing latency and order miscommunication during peak hours.",
-    overview:
-      "Engineered a full-stack POS system to eliminate billing latency and order miscommunication during peak hours. Built the interactive React order management dashboard, Node.js REST API endpoints, and MongoDB document schemas.",
-    challengeSolution:
-      "High-frequency concurrent order submissions from table tablets caused database state conflicts. Solved by implementing optimistic UI rendering combined with atomic MongoDB update operations ($inc and $push) to process concurrent orders with zero transactional lock latency.",
-    stack: ["MongoDB", "Express.js", "React.js", "Node.js", "Tailwind CSS"],
-    techDecision:
-      "Chosen for its flexible document schema allowing dynamic menu item modifiers and sub-second JSON response payloads.",
+    slug: "palettero",
+    name: "Palettero",
+    categories: ["SaaS", "Full Stack"],
+    year: "TODO",
+    tagline: "Launched color and theme tool with AI palette suggestions",
+    description:
+      "A launched product for editing color themes, with AI palette suggestions and shareable links. Built for search and AI answer engines (AEO and GEO). Tested with Playwright and Vitest, shipped through GitHub Actions CI.",
+    tech: [
+      "Next.js",
+      "TypeScript",
+      "Tailwind CSS v4",
+      "Supabase",
+      "PostgreSQL",
+      "Cloudflare Workers",
+      "PostHog",
+      "Gemini",
+      "Grok",
+      "Workers AI",
+      "Zustand",
+      "Zod",
+      "Playwright",
+      "Vitest",
+      "GitHub Actions",
+    ],
+    image: null,
+    live: "https://app.palettero.workers.dev/",
+    github: null,
+    featured: true,
+    group: "main",
+  },
+  {
+    slug: "dinepine",
+    name: "DinePine",
+    categories: ["SaaS", "Full Stack"],
+    year: "TODO",
+    tagline: "Restaurant POS SaaS",
+    description:
+      "Restaurant POS with cashier, kitchen and admin screens, from table orders to billing.",
+    tech: ["React", "Node.js", "Express", "MongoDB"],
     image: "/projects/dinepine.png",
-    images: [
-      "/projects/dinepine.png",
-      "/projects/dinepine_dash.png",
-      "/projects/dinepine_bill.png",
-    ],
-    liveUrl: "https://dinepine-pos.vercel.app",
-    githubUrl: "https://github.com/code-with-saad/POS",
+    live: "https://dinepine-pos.vercel.app",
+    github: "https://github.com/code-with-saad/POS",
+    featured: true,
+    group: "main",
   },
   {
-    id: "a1uniforms",
-    title: "A1 Uniforms",
-    subtitle: "E-Commerce Catalog with Client-Side Filtering",
-    category: "Frontend Development",
-    shortDescription:
-      "Responsive e-commerce catalog with real-time multi-attribute filtering across medical, academic, and workwear product lines.",
-    overview:
-      "Designed a responsive e-commerce web catalog allowing customers to filter uniforms across medical, academic, and workwear lines without page reloads. Created modern UI components and high-performance filtering logic.",
-    challengeSolution:
-      "Multi-attribute filter combinations (category, size, and search text) caused layout thrashing and DOM re-render delays. Solved by constructing an in-memory normalized product matrix with debounced inputs, cutting filter compute time to < 2ms.",
-    stack: ["JavaScript (ES6+)", "HTML5", "CSS3 / Tailwind", "Vercel"],
-    techDecision:
-      "Vanilla JS eliminated framework bundle overhead, guaranteeing sub-100ms LCP on low-tier mobile hardware.",
+    slug: "eventsphere",
+    name: "EventSphere",
+    categories: ["SaaS", "Full Stack"],
+    year: "TODO",
+    tagline: "Event and expo management SaaS",
+    description:
+      "Multi-role event and expo management SaaS, built with React, Node, Express and MongoDB.",
+    tech: ["React", "Node.js", "Express", "MongoDB"],
+    image: null,
+    live: null,
+    github: "https://github.com/code-with-saad/eventsphere",
+    featured: true,
+    group: "main",
+  },
+  {
+    slug: "nexoria",
+    name: "Nexoria",
+    categories: ["Full Stack", "Internship"],
+    year: "TODO",
+    tagline: "E-commerce with Stripe checkout",
+    description:
+      "E-commerce store with Stripe checkout and admin analytics. Built during the CodeAlpha internship.",
+    tech: ["React", "Node.js", "Express", "MongoDB", "Stripe"],
+    image: null,
+    live: null,
+    github: "https://github.com/code-with-saad/CodeAlpha_Nexoria",
+    featured: false,
+    group: "main",
+  },
+  {
+    slug: "huddle",
+    name: "Huddle",
+    categories: ["Full Stack", "Internship"],
+    year: "TODO",
+    tagline: "Project management with real-time updates",
+    description:
+      "Project management tool with real-time updates over WebSocket. Built during the CodeAlpha internship.",
+    tech: ["React", "Node.js", "Express", "MongoDB", "WebSocket"],
+    image: null,
+    live: null,
+    github: "https://github.com/code-with-saad/CodeAlpha_Huddle",
+    featured: false,
+    group: "main",
+  },
+  {
+    slug: "circl",
+    name: "Circl",
+    categories: ["Full Stack", "Internship"],
+    year: "TODO",
+    tagline: "Social platform",
+    description:
+      "Social platform with profiles, posts, comments, likes and follows. Built during the CodeAlpha internship.",
+    tech: ["React", "Node.js", "Express", "MongoDB"],
+    image: null,
+    live: null,
+    github: "https://github.com/code-with-saad/CodeAlpha_Circl",
+    featured: false,
+    group: "main",
+  },
+  {
+    slug: "marketlink",
+    name: "MarketLink",
+    categories: ["Full Stack"],
+    year: "TODO",
+    tagline: "Farmers market platform",
+    description: "Farmers market platform built for TechWiz 7.",
+    tech: ["React", "Node.js", "Express", "MongoDB"],
+    image: null,
+    live: null,
+    github: "https://github.com/code-with-saad/FBA_Omniverse",
+    featured: false,
+    group: "main",
+  },
+  {
+    slug: "a1uniforms",
+    name: "A1 Uniforms",
+    categories: ["Frontend"],
+    year: "TODO",
+    tagline: "Uniform catalog",
+    description:
+      "Responsive uniform catalog with client-side filtering across medical, school and workwear lines.",
+    tech: ["JavaScript", "HTML", "CSS", "Tailwind CSS"],
     image: "/projects/a1uniforms.png",
-    images: [
-      "/projects/a1uniforms.png",
-      "/projects/a1uniforms_grid.png",
-      "/projects/a1uniforms_filter.png",
-    ],
-    liveUrl: "https://a1uniforms.vercel.app",
-    githubUrl: "https://github.com/code-with-saad/E-PROJECT",
+    live: "https://a1uniforms.vercel.app",
+    github: "https://github.com/code-with-saad/E-PROJECT",
+    featured: false,
+    group: "earlier",
   },
   {
-    id: "covidcare",
-    title: "COVID Care",
-    subtitle: "PHP & MySQL Vaccination Management System",
-    category: "Full Stack & Database",
-    shortDescription:
-      "Centralized healthcare portal for citizen vaccination scheduling, hospital dose allocation, and certificate verification.",
-    overview:
-      "Architected a centralized healthcare management portal for citizen vaccination scheduling, hospital dose allocation, and certificate verification. Designed relational database schemas, PHP session auth, and admin dashboards.",
-    challengeSolution:
-      "Simultaneous patient requests for remaining vaccination slots posed a critical double-booking risk. Solved by implementing MySQL InnoDB row-level database locks (SELECT ... FOR UPDATE) inside atomic PHP database transactions.",
-    stack: ["PHP 8", "MySQL", "Bootstrap", "HTML5/CSS3", "InfinityFree"],
-    techDecision:
-      "MySQL relational schema enforced strict foreign key constraints and ACID transactional integrity across appointment centers.",
+    slug: "covidcare",
+    name: "COVID Care",
+    categories: ["Full Stack"],
+    year: "TODO",
+    tagline: "Vaccination management",
+    description:
+      "Vaccination management system for citizen scheduling, hospital dose allocation and certificate verification.",
+    tech: ["PHP", "MySQL"],
     image: "/projects/covidcare.png",
-    images: [
-      "/projects/covidcare.png",
-      "/projects/covidcare_form.png",
-      "/projects/covidcare_admin.png",
-    ],
-    liveUrl: "https://covid-care.infinityfree.io",
-    githubUrl: "https://github.com/code-with-saad/Covid-Care",
+    live: null,
+    github: "https://github.com/code-with-saad/Covid-Care",
+    featured: false,
+    group: "earlier",
   },
 ];
