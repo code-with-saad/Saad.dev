@@ -2,9 +2,10 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { LuDownload, LuMenu, LuSearch, LuX } from "react-icons/lu";
+import { LuDownload, LuMenu, LuX } from "react-icons/lu";
 import { SECTIONS } from "@/data/sections";
 import { useActiveSection } from "@/hooks/useActiveSection";
+import SidebarSearch from "./SidebarSearch";
 import ThemeToggle from "./ThemeToggle";
 
 const NAME = "Muhammad Saad";
@@ -213,16 +214,7 @@ export default function Sidebar() {
           </span>
         </div>
 
-        <div
-          aria-hidden="true"
-          className="mt-5 flex h-10 items-center gap-2 rounded-lg border border-line bg-surface px-3 text-sm text-muted"
-        >
-          <LuSearch className="h-4 w-4 shrink-0" />
-          <span className="flex-1 truncate">Search</span>
-          <kbd className="rounded border border-line bg-canvas px-1.5 py-0.5 font-mono text-[10px] leading-none text-muted">
-            Ctrl K
-          </kbd>
-        </div>
+        <SidebarSearch />
 
         <nav aria-label="Sections" className="mt-6">
           <NavList active={active} onNavigate={navigate} />

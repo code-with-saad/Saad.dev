@@ -13,7 +13,7 @@ export default function SectionShell({
     <section
       id={id}
       aria-labelledby={`${id}-title`}
-      className="scroll-mt-[138px] py-20 min-[900px]:scroll-mt-[72px] min-[900px]:py-24"
+      className="scroll-mt-[89px] py-20 min-[900px]:scroll-mt-8 min-[900px]:py-24"
     >
       <div className="flex items-center gap-3">
         <span aria-hidden="true" className="h-px w-8 bg-accent" />
