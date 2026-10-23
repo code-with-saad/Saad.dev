@@ -2,6 +2,7 @@ import About from "@/components/About";
 import Intro from "@/components/Intro";
 import ScrollProgress from "@/components/ScrollProgress";
 import SectionShell from "@/components/SectionShell";
+import SelectedWork from "@/components/SelectedWork";
 import Sidebar from "@/components/Sidebar";
 import { SECTIONS } from "@/data/sections";
 
@@ -18,6 +19,7 @@ export default function Home() {
               {SECTIONS.map(({ id, index, label }) => {
                 if (id === "intro") return <Intro key={id} />;
                 if (id === "about") return <About key={id} />;
+                if (id === "work") return <SelectedWork key={id} />;
 
                 return (
                   <SectionShell
