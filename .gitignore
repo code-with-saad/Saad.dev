@@ -3,7 +3,6 @@
 # dependencies
 node_modules/
 **/node_modules/
-portfolio-app/
 /.pnp
 .pnp.*
 .yarn/*
@@ -25,6 +24,7 @@ portfolio-app/
 # misc
 .DS_Store
 *.pem
+.qoder/
 
 # debug
 npm-debug.log*

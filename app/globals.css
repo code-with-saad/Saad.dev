@@ -1,137 +1,185 @@
 @import "tailwindcss";
 
-:root {
-  --background: #090d16;
-  --foreground: #f1f5f9;
-  --card-bg: #111827;
-  --card-border: #1f2937;
-  --accent: #10b981;
-  --accent-hover: #059669;
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+@theme inline {
+  --font-sans: var(--font-instrument), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-display: var(--font-bricolage), var(--font-instrument), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains), ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  --color-canvas: var(--canvas);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-accent-strong: var(--accent-strong);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-ink: var(--accent-ink);
 }
 
-@keyframes blink {
-  0%, 100% { opacity: 1; }
-  50%       { opacity: 0; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
-}
-
-
-html {
-  scroll-behavior: smooth;
+:root,
+[data-theme="dark"] {
   color-scheme: dark;
+  --canvas: #0F0F0E;
+  --surface: #171716;
+  --surface-2: #1F1F1D;
+  --line: #2A2A28;
+  --line-strong: #3A3A37;
+  --ink: #F2F0EA;
+  --muted: #9A978F;
+  --accent: #04E0B3;
+  --accent-strong: #1FF0C8;
+  --accent-soft: rgba(4, 224, 179, 0.12);
+  --accent-ink: #0F0F0E;
 }
 
-section {
-  scroll-margin-top: 90px;
+[data-theme="light"] {
+  color-scheme: light;
+  --canvas: #F4F2EE;
+  --surface: #EDEAE3;
+  --surface-2: #E4E0D7;
+  --line: #D8D3C8;
+  --line-strong: #C2BCAD;
+  --ink: #12120F;
+  --muted: #625F57;
+  --accent: #047A63;
+  --accent-strong: #036B56;
+  --accent-soft: rgba(4, 122, 99, 0.12);
+  --accent-ink: #F7F5F1;
 }
 
-@media (prefers-reduced-motion: reduce) {
+@layer base {
   html {
-    scroll-behavior: auto;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--canvas);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    overflow-x: hidden;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    text-wrap: balance;
+  }
+
+  section {
+    scroll-margin-top: 90px;
+  }
+
+  ::selection {
+    background-color: var(--accent-soft);
+    color: var(--ink);
   }
 }
 
-body {
-  background-color: var(--background);
-  color: var(--foreground);
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-  overflow-x: hidden;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
+@layer components {
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    font-weight: 500;
+    line-height: 1.2;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .section-title {
+    font-family: var(--font-display);
+    font-size: clamp(1.875rem, 1.25rem + 2.4vw, 3rem);
+    font-weight: 800;
+    line-height: 1.04;
+    letter-spacing: -0.035em;
+    color: var(--ink);
+    text-wrap: balance;
+  }
+
+  .accent-underline {
+    display: inline;
+    padding-bottom: 0.02em;
+    border-bottom: 0.14em solid var(--accent);
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+  }
+
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.3125rem 0.6875rem;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background-color: var(--surface);
+    color: var(--muted);
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    font-weight: 500;
+    line-height: 1.1;
+    white-space: nowrap;
+  }
 }
 
-/* Custom Scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #090d16;
+  background: var(--canvas);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #1f2937;
+  background: var(--line-strong);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #374151;
+  background: var(--muted);
 }
 
-::selection {
-  background-color: rgba(16, 185, 129, 0.3);
-  color: #34d399;
-}
-
-/* Aurora Background Keyframes */
-@keyframes aurora-1 {
-  0%, 100% {
-    transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
-  }
-  50% {
-    transform: translate3d(60px, -40px, 0) rotate(120deg) scale(1.08);
-  }
-}
-
-@keyframes aurora-2 {
-  0%, 100% {
-    transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
-  }
-  50% {
-    transform: translate3d(-50px, 50px, 0) rotate(-120deg) scale(1.12);
-  }
-}
-
-@keyframes aurora-3 {
-  0%, 100% {
-    transform: translate3d(0, 0, 0) scale(1);
-  }
-  50% {
-    transform: translate3d(40px, 40px, 0) scale(0.92);
-  }
-}
-
-.aurora-blob-1 {
-  animation: aurora-1 20s ease-in-out infinite;
-  will-change: transform;
-}
-
-.aurora-blob-2 {
-  animation: aurora-2 25s ease-in-out infinite;
-  will-change: transform;
-}
-
-.aurora-blob-3 {
-  animation: aurora-3 22s ease-in-out infinite;
-  will-change: transform;
-}
-
-/* Orbit Spinner Animation for Loading Screen */
-@keyframes orbit-rotate {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.animate-orbit {
-  animation: orbit-rotate 1.5s linear infinite;
+.theme-switching,
+.theme-switching *,
+.theme-switching *::before,
+.theme-switching *::after {
+  transition-property: background-color, border-color, color, fill, stroke !important;
+  transition-duration: 240ms !important;
+  transition-timing-function: ease !important;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .aurora-blob-1,
-  .aurora-blob-2,
-  .aurora-blob-3,
-  .animate-orbit {
-    animation: none !important;
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  html {
+    scroll-behavior: auto;
+  }
+
+  .theme-switching,
+  .theme-switching *,
+  .theme-switching *::before,
+  .theme-switching *::after {
+    transition-duration: 0.01ms !important;
   }
 }

@@ -1,9 +1,33 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import {
+  Bricolage_Grotesque,
+  Instrument_Sans,
+  JetBrains_Mono,
+} from "next/font/google";
 import "./globals.css";
-import ParticleBackground from "@/components/ParticleBackground";
 
-const inter = Inter({ subsets: ["latin"], display: "swap" });
+const display = Bricolage_Grotesque({
+  subsets: ["latin"],
+  weight: "variable",
+  variable: "--font-bricolage",
+  display: "swap",
+});
+
+const sans = Instrument_Sans({
+  subsets: ["latin"],
+  weight: "variable",
+  variable: "--font-instrument",
+  display: "swap",
+});
+
+const mono = JetBrains_Mono({
+  subsets: ["latin"],
+  weight: "variable",
+  variable: "--font-jetbrains",
+  display: "swap",
+});
+
+const themeInitScript = `(function(){try{var s=localStorage.getItem("theme");var t=s==="light"||s==="dark"?s:(window.matchMedia("(prefers-color-scheme: light)").matches?"light":"dark");document.documentElement.dataset.theme=t;}catch(e){}})();`;
 
 export const metadata: Metadata = {
   title: "Saad | Full-Stack Web Developer",
@@ -34,9 +58,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${inter.className} scroll-smooth dark`}>
-      <body className="min-h-screen bg-[#090d16] text-slate-100 antialiased selection:bg-emerald-500/30 selection:text-emerald-300">
-        <ParticleBackground />
+    <html
+      lang="en"
+      data-theme="dark"
+      suppressHydrationWarning
+      className={`${display.variable} ${sans.variable} ${mono.variable}`}
+    >
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+      </head>
+      <body className="min-h-screen bg-canvas text-ink antialiased">
         {children}
       </body>
     </html>

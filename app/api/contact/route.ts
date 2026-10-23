@@ -5,7 +5,6 @@ export async function POST(request: Request) {
     const body = await request.json();
     const { name, email, message } = body;
 
-    // Validate inputs
     if (!name || typeof name !== "string" || name.trim().length === 0) {
       return NextResponse.json(
         { success: false, error: "Please provide your name." },
@@ -36,7 +35,6 @@ export async function POST(request: Request) {
     const templateId = process.env.EMAILJS_TEMPLATE_ID || "template_default";
     const publicKey = process.env.EMAILJS_PUBLIC_KEY || "public_key_default";
 
-    // Dispatch to EmailJS REST API if environment keys exist
     if (process.env.EMAILJS_SERVICE_ID && process.env.EMAILJS_TEMPLATE_ID) {
       const emailjsRes = await fetch("https://api.emailjs.com/api/v1.0/email/send", {
         method: "POST",
@@ -60,7 +58,6 @@ export async function POST(request: Request) {
         console.error("EmailJS API response error:", errText);
       }
     } else {
-      // Log details for delivery to saadkashif770@gmail.com
       console.log("Contact Form Submission Logged for saadkashif770@gmail.com:", {
         recipient: "saadkashif770@gmail.com",
         from_name: name,
