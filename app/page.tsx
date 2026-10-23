@@ -1,3 +1,5 @@
+import About from "@/components/About";
+import Intro from "@/components/Intro";
 import ScrollProgress from "@/components/ScrollProgress";
 import SectionShell from "@/components/SectionShell";
 import Sidebar from "@/components/Sidebar";
@@ -13,9 +15,19 @@ export default function Home() {
         <div className="min-[900px]:pl-[78px] min-[900px]:pr-10">
           <div className="mx-auto max-w-[900px] px-5 py-8 min-[900px]:mx-0 min-[900px]:px-0 min-[900px]:py-20">
             <div className="divide-y divide-line">
-              {SECTIONS.map(({ id, index, label }) => (
-                <SectionShell key={id} id={id} index={index} label={label} />
-              ))}
+              {SECTIONS.map(({ id, index, label }) => {
+                if (id === "intro") return <Intro key={id} />;
+                if (id === "about") return <About key={id} />;
+
+                return (
+                  <SectionShell
+                    key={id}
+                    id={id}
+                    index={index}
+                    label={label}
+                  />
+                );
+              })}
             </div>
           </div>
         </div>

@@ -112,12 +112,25 @@
     text-wrap: balance;
   }
 
+  .hero-title {
+    font-family: var(--font-display);
+    font-size: clamp(3rem, 1.25rem + 6vw, 6rem);
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.04em;
+    color: var(--ink);
+  }
+
   .accent-underline {
-    display: inline;
-    padding-bottom: 0.02em;
-    border-bottom: 0.14em solid var(--accent);
-    -webkit-box-decoration-break: clone;
-    box-decoration-break: clone;
+    text-decoration-line: underline;
+    text-decoration-color: var(--accent);
+    text-decoration-thickness: 0.1em;
+    text-underline-offset: 0.1em;
+    text-decoration-skip-ink: none;
+  }
+
+  .fade-in {
+    animation: fade-in 500ms ease-out both;
   }
 
   .pill {
@@ -134,6 +147,16 @@
     font-weight: 500;
     line-height: 1.1;
     white-space: nowrap;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
   }
 }
 
