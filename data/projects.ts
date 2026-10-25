@@ -148,7 +148,7 @@ export const PROJECTS: Project[] = [
     categories: ["Full Stack"],
     year: "2026",
     tagline: "Farmers market platform",
-    description: "Farmers market platform built for TechWiz 7.",
+    description: "Farmers market platform built for TechWiz 7. in the category of End-to-End Web Solutions.",
     tech: ["React", "Node.js", "Express", "MongoDB"],
     image: "/projects/marketlink.png",
     live: null,
