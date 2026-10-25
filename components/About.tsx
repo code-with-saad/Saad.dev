@@ -1,3 +1,4 @@
+import GitHubActivity from "@/components/GitHubActivity";
 import Reveal from "@/components/Reveal";
 
 export default function About() {
@@ -38,6 +39,10 @@ export default function About() {
           </strong>
           .
         </p>
+      </Reveal>
+
+      <Reveal delay={140} className="mt-9">
+        <GitHubActivity />
       </Reveal>
     </section>
   );
