@@ -7,7 +7,8 @@ import {
   type ReactNode,
 } from "react";
 import Image from "next/image";
-import { LuArrowUpRight, LuChevronDown } from "react-icons/lu";
+import Link from "next/link";
+import { LuArrowRight, LuChevronDown } from "react-icons/lu";
 import Reveal from "@/components/Reveal";
 import { PROJECTS, type Project } from "@/data/projects";
 
@@ -109,24 +110,14 @@ function CardLink({
   className: string;
   children: ReactNode;
 }) {
-  const href = project.live ?? project.github;
-
-  if (!href) {
-    return <div className={className}>{children}</div>;
-  }
-
   return (
-    <a
-      href={href}
-      target="_blank"
-      rel="noopener noreferrer"
-      aria-label={`${project.name}: open ${
-        project.live ? "live site" : "GitHub repository"
-      }`}
+    <Link
+      href={`/projects/${project.slug}`}
+      aria-label={`Open the ${project.name} case study`}
       className={`${className} focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-canvas`}
     >
       {children}
-    </a>
+    </Link>
   );
 }
 
@@ -166,8 +157,8 @@ function FeaturedCard({
 
         <h3 className="mt-4 flex items-start gap-2 font-display text-[28px] font-extrabold leading-[1.03] tracking-[-0.03em] text-accent min-[1180px]:text-[34px]">
           {project.name}
-          <LuArrowUpRight
-            className="mt-1 h-5 w-5 shrink-0"
+          <LuArrowRight
+            className="mt-1 h-5 w-5 shrink-0 transition-transform duration-200 group-hover:translate-x-0.5"
             aria-hidden="true"
           />
         </h3>
@@ -202,8 +193,8 @@ function ProjectCard({ project }: { project: Project }) {
         <div className="flex items-start justify-between gap-3">
           <h3 className="flex items-start gap-1.5 font-display text-[21px] font-extrabold leading-[1.1] tracking-[-0.02em] text-ink">
             {project.name}
-            <LuArrowUpRight
-              className="mt-1 h-4 w-4 shrink-0 text-muted transition-colors group-hover:text-accent"
+            <LuArrowRight
+              className="mt-1 h-4 w-4 shrink-0 text-muted transition-[color,transform] duration-200 group-hover:translate-x-0.5 group-hover:text-accent"
               aria-hidden="true"
             />
           </h3>

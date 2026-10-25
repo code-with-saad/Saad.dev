@@ -7,12 +7,15 @@ import {
   useState,
   type KeyboardEvent as ReactKeyboardEvent,
 } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import { LuSearch } from "react-icons/lu";
 import { SECTIONS } from "@/data/sections";
 
 const RESULTS_ID = "sidebar-search-results";
 
 export default function SidebarSearch() {
+  const pathname = usePathname();
+  const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [query, setQuery] = useState("");
@@ -74,6 +77,11 @@ export default function SidebarSearch() {
     setOpen(false);
     setQuery("");
     inputRef.current?.blur();
+
+    if (pathname !== "/") {
+      router.push(`/#${id}`);
+      return;
+    }
 
     const reduceMotion = window.matchMedia(
       "(prefers-reduced-motion: reduce)"

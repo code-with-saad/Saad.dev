@@ -7,6 +7,7 @@ import {
   LuMail,
   LuUser,
 } from "react-icons/lu";
+import { usePathname } from "next/navigation";
 import { useActiveSection } from "@/hooks/useActiveSection";
 
 const ITEMS = [
@@ -19,6 +20,8 @@ const ITEMS = [
 
 export default function MobileNav() {
   const [active, setActive] = useActiveSection();
+  const pathname = usePathname();
+  const onHome = pathname === "/";
 
   return (
     <nav
@@ -27,12 +30,12 @@ export default function MobileNav() {
     >
       <ul className="grid h-14 grid-cols-5">
         {ITEMS.map(({ id, label, Icon }) => {
-          const isActive = active === id;
+          const isActive = onHome && active === id;
 
           return (
             <li key={id} className="min-w-0">
               <a
-                href={`#${id}`}
+                href={onHome ? `#${id}` : `/#${id}`}
                 onClick={() => setActive(id)}
                 aria-current={isActive ? "location" : undefined}
                 className={`relative flex h-full flex-col items-center justify-center gap-1 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-accent ${

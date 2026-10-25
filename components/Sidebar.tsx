@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 import { LuDownload, LuMenu, LuX } from "react-icons/lu";
 import { SECTIONS } from "@/data/sections";
 import { useActiveSection } from "@/hooks/useActiveSection";
@@ -18,20 +19,21 @@ const RESUME_URL = "/resume.pdf";
 
 type NavListProps = {
   active: string;
+  onHome: boolean;
   size?: "md" | "lg";
   onNavigate?: (id: string) => void;
 };
 
-function NavList({ active, size = "md", onNavigate }: NavListProps) {
+function NavList({ active, onHome, size = "md", onNavigate }: NavListProps) {
   return (
     <ul className="space-y-0.5">
       {SECTIONS.map((item) => {
-        const isActive = active === item.id;
+        const isActive = onHome && active === item.id;
 
         return (
           <li key={item.id}>
             <a
-              href={`#${item.id}`}
+              href={onHome ? `#${item.id}` : `/#${item.id}`}
               onClick={() => onNavigate?.(item.id)}
               aria-current={isActive ? "location" : undefined}
               className={`group relative flex items-center gap-4 pl-10 ${
@@ -141,6 +143,8 @@ function SidebarActions() {
 
 export default function Sidebar() {
   const [active, setActive] = useActiveSection();
+  const pathname = usePathname();
+  const onHome = pathname === "/";
   const [menuOpen, setMenuOpen] = useState(false);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
@@ -188,7 +192,7 @@ export default function Sidebar() {
     <>
       <aside className="fixed inset-y-0 left-0 z-40 hidden w-80 flex-col overflow-y-auto border-r border-line bg-canvas px-8 py-7 min-[900px]:flex">
         <a
-          href="#intro"
+          href={onHome ? "#intro" : "/#intro"}
           aria-label="Muhammad Saad, back to intro"
           className="block w-[168px] rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-4 focus-visible:ring-offset-canvas"
         >
@@ -220,7 +224,7 @@ export default function Sidebar() {
         <SidebarSearch />
 
         <nav aria-label="Sections" className="mt-6">
-          <NavList active={active} onNavigate={navigate} />
+          <NavList active={active} onHome={onHome} onNavigate={navigate} />
         </nav>
 
         <div className="mt-auto pt-6">
@@ -232,7 +236,7 @@ export default function Sidebar() {
         <div className="flex items-center justify-between px-5 py-4">
           <h1 className="font-display text-lg font-extrabold tracking-tight">
             <a
-              href="#intro"
+              href={onHome ? "#intro" : "/#intro"}
               className="rounded-md text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-4 focus-visible:ring-offset-canvas"
             >
               {NAME}
@@ -284,7 +288,7 @@ export default function Sidebar() {
             aria-label="Sections"
             className="flex-1 overflow-y-auto px-5 py-8"
           >
-            <NavList active={active} size="lg" onNavigate={navigate} />
+            <NavList active={active} onHome={onHome} size="lg" onNavigate={navigate} />
           </nav>
 
           <div className="border-t border-line px-5 py-6">
