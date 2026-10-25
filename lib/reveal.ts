@@ -24,9 +24,11 @@ function waitForSelector(selector: string, timeout = 1000) {
 
 export function navigateWithReveal({
   navigate,
+  originY,
   selector,
 }: {
   navigate: () => void;
+  originY: number;
   selector: string;
 }) {
   if (
@@ -38,6 +40,7 @@ export function navigateWithReveal({
   }
 
   const root = document.documentElement;
+  root.style.setProperty("--route-y", `${Math.round(originY)}px`);
 
   let transition: ViewTransition;
 

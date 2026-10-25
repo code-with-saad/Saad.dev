@@ -36,8 +36,14 @@ export default function RevealLink({
 
     event.preventDefault();
 
+    // The reveal circle opens on the right edge, level with the click.
+    const rect = event.currentTarget.getBoundingClientRect();
+    const originY =
+      event.detail === 0 ? rect.top + rect.height / 2 : event.clientY;
+
     navigateWithReveal({
       navigate: () => router.push(href),
+      originY,
       selector: revealSelector,
     });
   };

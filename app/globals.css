@@ -242,18 +242,18 @@
   }
 }
 
-/* Project routes: the incoming page slides in from the right edge. */
+/* Project routes: the same circle, opening from the right edge and sweeping left. */
 html[data-route-transition="true"]::view-transition-new(root) {
-  animation: route-slide-in 680ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: route-reveal 1000ms cubic-bezier(0.65, 0, 0.35, 1) both;
 }
 
-@keyframes route-slide-in {
+@keyframes route-reveal {
   from {
-    transform: translateX(100%);
+    clip-path: circle(0px at 100% var(--route-y, 50%));
   }
 
   to {
-    transform: translateX(0);
+    clip-path: circle(150vmax at 100% var(--route-y, 50%));
   }
 }
 
