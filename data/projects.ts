@@ -9,6 +9,8 @@ export interface Project {
   description: string;
   tech: string[];
   image: string | null;
+  /** Extra screenshots for the case-study gallery; `image` stays the cover. */
+  gallery?: string[];
   live: string | null;
   github: string | null;
   post?: string | null;

@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import {
@@ -10,6 +9,7 @@ import {
   LuGlobe,
   LuLinkedin,
 } from "react-icons/lu";
+import ProjectPreview from "@/components/ProjectPreview";
 import StackUsed from "@/components/StackUsed";
 import { PROJECTS } from "@/data/projects";
 
@@ -85,6 +85,11 @@ export default async function ProjectPage({
 
   const project = PROJECTS[index];
   const nextProject = PROJECTS[(index + 1) % PROJECTS.length];
+  const gallery = project.gallery?.length
+    ? project.gallery
+    : project.image
+      ? [project.image]
+      : [];
 
   const actions = [
     { key: "github", label: "GitHub", href: project.github, Icon: LuGithub },
@@ -116,38 +121,11 @@ export default async function ProjectPage({
       </Link>
 
       <figure className="mt-8">
-        <div className="overflow-hidden rounded-xl border border-line bg-surface">
-          <div className="flex items-center gap-2 border-b border-line px-4 py-3">
-            <span className="flex items-center gap-1.5" aria-hidden="true">
-              <span className="h-2 w-2 rounded-full bg-line-strong" />
-              <span className="h-2 w-2 rounded-full bg-line-strong" />
-              <span className="h-2 w-2 rounded-full bg-line-strong" />
-            </span>
-            <span className="ml-3 min-w-0 truncate rounded border border-line bg-canvas px-2 py-1 font-mono text-[10px] leading-none text-muted">
-              {project.live ? hostOf(project.live) : "Preview"}
-            </span>
-          </div>
-
-          <div className="relative aspect-[16/10] w-full bg-surface-2">
-            {project.image ? (
-              <Image
-                src={project.image}
-                alt={`${project.name} screenshot`}
-                fill
-                priority
-                sizes="(min-width: 900px) 900px, 100vw"
-                quality={82}
-                className="object-contain"
-              />
-            ) : (
-              <div className="flex h-full w-full items-center justify-center">
-                <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-muted">
-                  {project.name}
-                </span>
-              </div>
-            )}
-          </div>
-        </div>
+        <ProjectPreview
+          name={project.name}
+          images={gallery}
+          host={project.live ? hostOf(project.live) : null}
+        />
         <figcaption className="sr-only">
           {project.name} interface preview
         </figcaption>
