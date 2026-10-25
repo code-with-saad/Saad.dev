@@ -1,9 +1,9 @@
 import Reveal from "@/components/Reveal";
 
 const STATS = [
-  { value: "9", label: "PROJECTS SHIPPED" },
-  { value: "3", label: "CODEALPHA PROJECTS" },
-  { value: "2", label: "TEAM SUBMISSIONS" },
+  { value: "9+", label: "PROJECTS SHIPPED" },
+  { value: "1+", label: "Year of Working Experience" },
+  { value: "2+", label: "TEAM SUBMISSIONS" },
 ];
 
 export default function Intro() {
@@ -11,7 +11,7 @@ export default function Intro() {
     <section
       id="intro"
       aria-labelledby="intro-title"
-      className="scroll-mt-[89px] py-20 min-[900px]:scroll-mt-8 min-[900px]:py-24"
+      className="scroll-mt-[89px] pt-8 pb-20 min-[900px]:scroll-mt-8 min-[900px]:pb-24"
     >
       <Reveal>
         <p className="eyebrow text-accent">
@@ -19,8 +19,8 @@ export default function Intro() {
         </p>
 
         <h2 id="intro-title" className="hero-title mt-7">
-          I build <span className="accent-underline">full stack products</span> and{" "}
-          <span className="accent-underline">put them live</span>.
+          I build <span className="accent-underline">full stack products</span> that{" "}
+          <span className="accent-underline">hold up in production</span>.
         </h2>
       </Reveal>
 

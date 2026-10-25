@@ -1,37 +1,82 @@
 import Reveal from "@/components/Reveal";
 
+type StackItem = {
+  name: string;
+  level: string;
+};
+
 type StackGroup = {
   area: string;
-  items: string[];
+  focus: string;
+  items: StackItem[];
 };
 
 const STACK: StackGroup[] = [
   {
     area: "Languages",
-    items: ["TypeScript", "JavaScript", "Python", "SQL"],
+    focus: "Core",
+    items: [
+      { name: "TypeScript", level: "daily" },
+      { name: "JavaScript", level: "daily" },
+      { name: "Dart", level: "fluent" },
+      { name: "Python", level: "fluent" },
+      { name: "SQL", level: "fluent" },
+    ],
   },
   {
     area: "Frontend",
-    items: ["React", "Next.js", "Tailwind CSS", "Redux"],
+    focus: "Web / Mobile",
+    items: [
+      { name: "React", level: "daily" },
+      { name: "Next.js", level: "daily" },
+      { name: "Flutter", level: "fluent" },
+      { name: "Tailwind CSS", level: "daily" },
+    ],
   },
   {
     area: "Backend",
-    items: ["Node.js", "Express", "REST APIs", "Socket.io", "JWT"],
+    focus: "APIs",
+    items: [
+      { name: "Node.js", level: "daily" },
+      { name: "Express", level: "daily" },
+      { name: "FastAPI", level: "fluent" },
+      { name: "Python", level: "fluent" },
+      { name: "REST / GraphQL", level: "fluent" },
+      { name: "Socket.io", level: "fluent" },
+      { name: "JWT", level: "fluent" },
+    ],
   },
   {
     area: "Data",
-    items: ["MongoDB", "PostgreSQL", "MySQL", "Redis", "Supabase"],
+    focus: "SQL / NoSQL",
+    items: [
+      { name: "MongoDB", level: "daily" },
+      { name: "PostgreSQL", level: "fluent" },
+      { name: "MySQL", level: "fluent" },
+      { name: "Redis", level: "fluent" },
+      { name: "Supabase", level: "fluent" },
+    ],
   },
   {
-    area: "Tools",
+    area: "Cloud / DevOps",
+    focus: "Ship",
     items: [
-      "Git",
-      "GitHub Actions",
-      "Vercel",
-      "Render",
-      "Cloudflare",
-      "Postman",
-      "Figma",
+      { name: "Vercel", level: "daily" },
+      { name: "Render", level: "fluent" },
+      { name: "Cloudflare", level: "fluent" },
+      { name: "Postman", level: "daily" },
+      { name: "GitHub Actions", level: "fluent" },
+      { name: "Docker", level: "fluent" },
+    ],
+  },
+  {
+    area: "Practice",
+    focus: "How I work",
+    items: [
+      { name: "System design", level: "core" },
+      { name: "Code review", level: "weekly" },
+      { name: "Version control", level: "daily" },
+      { name: "AI-assisted dev", level: "daily" },
     ],
   },
 ];
@@ -54,43 +99,37 @@ export default function Stack() {
         </h2>
       </Reveal>
 
-      <Reveal delay={90} className="mt-10 max-w-[760px]">
-        <table className="w-full table-fixed border-collapse text-left">
-          <caption className="sr-only">
-            Tools and technologies grouped by area
-          </caption>
-          <thead>
-            <tr className="border-b border-line">
-              <th
-                scope="col"
-                className="w-[96px] pb-3 pr-4 font-mono text-[10px] font-medium uppercase tracking-[0.16em] text-muted min-[600px]:w-[160px]"
-              >
-                Area
-              </th>
-              <th
-                scope="col"
-                className="pb-3 font-mono text-[10px] font-medium uppercase tracking-[0.16em] text-muted"
-              >
-                Stack
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {STACK.map((group) => (
-              <tr key={group.area} className="border-b border-line align-top">
-                <th
-                  scope="row"
-                  className="py-4 pr-4 font-mono text-[10px] font-medium uppercase leading-[1.8] tracking-[0.16em] text-muted"
-                >
+      <Reveal delay={90} className="mt-12">
+        <ul className="grid gap-x-8 gap-y-12 min-[600px]:grid-cols-2 min-[1180px]:grid-cols-3">
+          {STACK.map((group) => (
+            <li key={group.area} className="min-w-0">
+              <div className="flex items-baseline justify-between gap-4 border-b border-line pb-2.5">
+                <h3 className="font-mono text-[10px] font-medium uppercase leading-relaxed tracking-[0.16em] text-muted">
                   {group.area}
-                </th>
-                <td className="py-4 text-[15px] leading-[1.7] text-ink">
-                  {group.items.join(", ")}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+                </h3>
+                <p className="font-mono text-[10px] uppercase leading-relaxed tracking-[0.12em] text-muted">
+                  {group.focus}
+                </p>
+              </div>
+
+              <ul className="mt-4 space-y-3">
+                {group.items.map((item) => (
+                  <li
+                    key={item.name}
+                    className="flex items-baseline justify-between gap-4"
+                  >
+                    <span className="font-display text-[15px] font-semibold leading-snug tracking-[-0.01em] text-ink">
+                      {item.name}
+                    </span>
+                    <span className="shrink-0 font-mono text-[10px] text-muted">
+                      {item.level}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </li>
+          ))}
+        </ul>
       </Reveal>
     </section>
   );
