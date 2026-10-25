@@ -1,14 +1,13 @@
 "use client";
 
-import { useEffect, useSyncExternalStore } from "react";
+import { useEffect, useSyncExternalStore, type MouseEvent } from "react";
 import { LuMoon, LuSun } from "react-icons/lu";
 
 type Theme = "dark" | "light";
+type ThemeOrigin = { x: number; y: number };
 
 const STORAGE_KEY = "theme";
-const SWITCH_MS = 240;
 const listeners = new Set<() => void>();
-let switchTimer: ReturnType<typeof setTimeout> | undefined;
 
 function systemTheme(): Theme {
   return window.matchMedia("(prefers-color-scheme: light)").matches
@@ -25,19 +24,26 @@ function readStoredTheme(): Theme | null {
   }
 }
 
-function applyTheme(theme: Theme, animate = true) {
+function applyTheme(theme: Theme, origin?: ThemeOrigin) {
   const root = document.documentElement;
 
-  if (animate) {
-    root.classList.add("theme-switching");
-    if (switchTimer) clearTimeout(switchTimer);
-    switchTimer = setTimeout(() => {
-      root.classList.remove("theme-switching");
-    }, SWITCH_MS + 20);
+  const commit = () => {
+    root.dataset.theme = theme;
+    listeners.forEach((listener) => listener());
+  };
+
+  if (
+    !origin ||
+    typeof document.startViewTransition !== "function" ||
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches
+  ) {
+    commit();
+    return;
   }
 
-  root.dataset.theme = theme;
-  listeners.forEach((listener) => listener());
+  root.style.setProperty("--theme-x", `${origin.x}px`);
+  root.style.setProperty("--theme-y", `${origin.y}px`);
+  document.startViewTransition(commit);
 }
 
 function subscribe(listener: () => void) {
@@ -68,19 +74,26 @@ export default function ThemeToggle({ className = "" }: { className?: string }) 
   const theme = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 
   useEffect(() => {
-    applyTheme(readStoredTheme() ?? systemTheme(), false);
+    applyTheme(readStoredTheme() ?? systemTheme());
   }, []);
 
   const nextTheme: Theme = theme === "dark" ? "light" : "dark";
 
-  const toggle = () => {
+  const toggle = (event: MouseEvent<HTMLButtonElement>) => {
+    const rect = event.currentTarget.getBoundingClientRect();
+    const origin = {
+      x: rect.left + rect.width / 2,
+      y: rect.top + rect.height / 2,
+    };
+
     try {
       localStorage.setItem(STORAGE_KEY, nextTheme);
     } catch {
-      applyTheme(nextTheme);
+      applyTheme(nextTheme, origin);
       return;
     }
-    applyTheme(nextTheme);
+
+    applyTheme(nextTheme, origin);
   };
 
   return (
@@ -91,17 +104,9 @@ export default function ThemeToggle({ className = "" }: { className?: string }) 
       className={`inline-flex h-10 w-10 items-center justify-center rounded-full border border-line text-ink transition-colors hover:border-line-strong hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-canvas ${className}`}
     >
       {theme === "dark" ? (
-        <LuSun
-          className="h-4 w-4"
-          strokeWidth={1.75}
-          aria-hidden="true"
-        />
+        <LuSun className="h-4 w-4" strokeWidth={1.75} aria-hidden="true" />
       ) : (
-        <LuMoon
-          className="h-4 w-4"
-          strokeWidth={1.75}
-          aria-hidden="true"
-        />
+        <LuMoon className="h-4 w-4" strokeWidth={1.75} aria-hidden="true" />
       )}
     </button>
   );
