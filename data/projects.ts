@@ -11,6 +11,7 @@ export interface Project {
   image: string | null;
   live: string | null;
   github: string | null;
+  post?: string | null;
   caseStudy?: string;
   hardCalls?: { title: string; body: string }[];
   featured: boolean;
