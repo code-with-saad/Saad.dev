@@ -36,15 +36,8 @@ export default function RevealLink({
 
     event.preventDefault();
 
-    const rect = event.currentTarget.getBoundingClientRect();
-    const origin =
-      event.detail === 0
-        ? { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 }
-        : { x: event.clientX, y: event.clientY };
-
     navigateWithReveal({
       navigate: () => router.push(href),
-      origin,
       selector: revealSelector,
     });
   };

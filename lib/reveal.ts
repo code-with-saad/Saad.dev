@@ -1,7 +1,5 @@
 const REDUCED_MOTION = "(prefers-reduced-motion: reduce)";
 
-type Origin = { x: number; y: number };
-
 function waitForSelector(selector: string, timeout = 1000) {
   return new Promise<void>((resolve) => {
     const startedAt = performance.now();
@@ -26,11 +24,9 @@ function waitForSelector(selector: string, timeout = 1000) {
 
 export function navigateWithReveal({
   navigate,
-  origin,
   selector,
 }: {
   navigate: () => void;
-  origin: Origin;
   selector: string;
 }) {
   if (
@@ -42,8 +38,6 @@ export function navigateWithReveal({
   }
 
   const root = document.documentElement;
-  root.style.setProperty("--theme-x", `${origin.x}px`);
-  root.style.setProperty("--theme-y", `${origin.y}px`);
 
   let transition: ViewTransition;
 

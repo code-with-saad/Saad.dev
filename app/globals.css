@@ -226,6 +226,7 @@
   z-index: 1;
 }
 
+/* Theme toggle: a circle that grows out of the button. */
 ::view-transition-new(root) {
   z-index: 2;
   animation: theme-reveal 1000ms cubic-bezier(0.65, 0, 0.35, 1) both;
@@ -238,6 +239,21 @@
 
   to {
     clip-path: circle(150vmax at var(--theme-x, 50%) var(--theme-y, 50%));
+  }
+}
+
+/* Project routes: the incoming page slides in from the right edge. */
+html[data-route-transition="true"]::view-transition-new(root) {
+  animation: route-slide-in 680ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes route-slide-in {
+  from {
+    transform: translateX(100%);
+  }
+
+  to {
+    transform: translateX(0);
   }
 }
 
