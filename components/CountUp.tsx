@@ -9,10 +9,12 @@ type CountUpProps = {
   className?: string;
 };
 
+const START_DELAY = 240;
+
 export default function CountUp({
   value,
   suffix = "",
-  duration = 1100,
+  duration = 2200,
   className = "",
 }: CountUpProps) {
   const ref = useRef<HTMLSpanElement | null>(null);
@@ -24,13 +26,22 @@ export default function CountUp({
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     let frame = 0;
+    let timer = 0;
+
+    const stop = () => {
+      cancelAnimationFrame(frame);
+      window.clearTimeout(timer);
+    };
 
     const start = () => {
       const started = performance.now();
 
       const tick = (now: number) => {
         const progress = Math.min(1, (now - started) / duration);
-        const eased = 1 - Math.pow(1 - progress, 3);
+        const eased =
+          progress < 0.5
+            ? 4 * progress * progress * progress
+            : 1 - Math.pow(-2 * progress + 2, 3) / 2;
         setDisplay(Math.round(value * eased));
 
         if (progress < 1) frame = requestAnimationFrame(tick);
@@ -39,18 +50,22 @@ export default function CountUp({
       frame = requestAnimationFrame(tick);
     };
 
+    const schedule = () => {
+      timer = window.setTimeout(start, START_DELAY);
+    };
+
     const rect = node.getBoundingClientRect();
 
     if (rect.top < window.innerHeight && rect.bottom > 0) {
-      start();
-      return () => cancelAnimationFrame(frame);
+      schedule();
+      return stop;
     }
 
     const observer = new IntersectionObserver(
       (entries) => {
         if (!entries.some((entry) => entry.isIntersecting)) return;
         observer.disconnect();
-        start();
+        schedule();
       },
       { threshold: 0.4 }
     );
@@ -59,7 +74,7 @@ export default function CountUp({
 
     return () => {
       observer.disconnect();
-      cancelAnimationFrame(frame);
+      stop();
     };
   }, [duration, value]);
 
