@@ -1,73 +1,94 @@
 "use client";
 
-import {
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-  useSyncExternalStore,
-} from "react";
+import { useCallback, useEffect, useRef, useSyncExternalStore } from "react";
 
-const SPRITE_SIZE = 48;
+// Port of oneko.js by adryd325 (https://github.com/adryd325/oneko.js).
+// Motion, timing and sprite coordinates are kept identical to the original.
+
+const SPRITE_SIZE = 32;
 const SPRITE_COLUMNS = 8;
 const SPRITE_ROWS = 4;
-const FRAME_MS = 110;
-const SIT_DISTANCE = 96;
-const WAKE_DISTANCE = 190;
-const MAX_SPEED = 7.5;
-const EASE = 0.1;
-const EDGE_X = 144;
-const EDGE_Y = 108;
+const FRAME_INTERVAL = 100;
+const NEKO_SPEED = 10;
+const START_POS = 32;
+const EDGE = 16;
 
 type Direction = "N" | "NE" | "E" | "SE" | "S" | "SW" | "W" | "NW";
-type Frame = readonly [column: number, row: number];
 
-const WALK_FRAMES: Record<Direction, readonly Frame[]> = {
-  E: [
-    [3, 0],
-    [3, 1],
+type IdleAnimation =
+  | "sleeping"
+  | "scratchSelf"
+  | "scratchWallN"
+  | "scratchWallS"
+  | "scratchWallE"
+  | "scratchWallW";
+
+type SpriteName = "idle" | "alert" | "tired" | Direction | IdleAnimation;
+
+type SpriteFrame = readonly [column: number, row: number];
+
+const SPRITE_SETS: Record<SpriteName, readonly SpriteFrame[]> = {
+  idle: [[-3, -3]],
+  alert: [[-7, -3]],
+  scratchSelf: [
+    [-5, 0],
+    [-6, 0],
+    [-7, 0],
   ],
-  SE: [
-    [5, 1],
-    [5, 2],
+  scratchWallN: [
+    [0, 0],
+    [0, -1],
   ],
-  S: [
-    [6, 3],
-    [7, 2],
+  scratchWallS: [
+    [-7, -1],
+    [-6, -2],
   ],
-  SW: [
-    [5, 3],
-    [6, 1],
+  scratchWallE: [
+    [-2, -2],
+    [-2, -3],
   ],
-  W: [
-    [4, 2],
-    [4, 3],
+  scratchWallW: [
+    [-4, 0],
+    [-4, -1],
   ],
-  NW: [
-    [1, 0],
-    [1, 1],
+  tired: [[-3, -2]],
+  sleeping: [
+    [-2, 0],
+    [-2, -1],
   ],
   N: [
-    [1, 2],
-    [1, 3],
+    [-1, -2],
+    [-1, -3],
   ],
   NE: [
-    [0, 2],
-    [0, 3],
+    [0, -2],
+    [0, -3],
+  ],
+  E: [
+    [-3, 0],
+    [-3, -1],
+  ],
+  SE: [
+    [-5, -1],
+    [-5, -2],
+  ],
+  S: [
+    [-6, -3],
+    [-7, -2],
+  ],
+  SW: [
+    [-5, -3],
+    [-6, -1],
+  ],
+  W: [
+    [-4, -2],
+    [-4, -3],
+  ],
+  NW: [
+    [-1, 0],
+    [-1, -1],
   ],
 };
-
-const IDLE_FRAME: Frame = [3, 3];
-const DIRECTION_BY_OCTANT: Direction[] = [
-  "E",
-  "SE",
-  "S",
-  "SW",
-  "W",
-  "NW",
-  "N",
-  "NE",
-];
 
 function useMedia(query: string) {
   const subscribe = useCallback(
@@ -86,186 +107,166 @@ function useMedia(query: string) {
   );
 }
 
-function paintFrame(node: HTMLElement, [column, row]: Frame) {
-  node.style.backgroundPosition = `${-column * SPRITE_SIZE}px ${
-    -row * SPRITE_SIZE
-  }px`;
-}
-
-function directionFor(dx: number, dy: number): Direction {
-  const octant = Math.round(Math.atan2(dy, dx) / (Math.PI / 4));
-  return DIRECTION_BY_OCTANT[((octant % 8) + 8) % 8];
-}
-
 export default function CursorCompanion() {
   const finePointer = useMedia("(hover: hover) and (pointer: fine)");
   const reduceMotion = useMedia("(prefers-reduced-motion: reduce)");
   const enabled = finePointer && !reduceMotion;
 
-  const wrapRef = useRef<HTMLDivElement | null>(null);
-  const spriteRef = useRef<HTMLSpanElement | null>(null);
-  const state = useRef({
-    x: 0,
-    y: 0,
-    pointerX: 0,
-    pointerY: 0,
-    seeded: false,
-    running: false,
-    seated: false,
-    frame: 0,
-    last: 0,
-  });
-
-  const [visible, setVisible] = useState(false);
-  const [seated, setSeated] = useState(false);
+  const nekoRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     if (!enabled) return;
 
-    const node = wrapRef.current;
-    const sprite = spriteRef.current;
-    if (!node || !sprite) return;
+    const nekoEl = nekoRef.current;
+    if (!nekoEl) return;
 
-    const current = state.current;
+    let nekoPosX = START_POS;
+    let nekoPosY = START_POS;
 
-    const clampX = (value: number) =>
-      Math.max(
-        EDGE_X,
-        Math.min(window.innerWidth - EDGE_X - SPRITE_SIZE, value)
-      );
+    let mousePosX = 0;
+    let mousePosY = 0;
 
-    const clampY = (value: number) =>
-      Math.max(
-        EDGE_Y,
-        Math.min(window.innerHeight - EDGE_Y - SPRITE_SIZE, value)
-      );
+    let frameCount = 0;
+    let idleTime = 0;
+    let idleAnimation: IdleAnimation | null = null;
+    let idleAnimationFrame = 0;
 
-    const paint = () => {
-      node.style.transform = `translate3d(${Math.round(current.x)}px, ${Math.round(
-        current.y
-      )}px, 0)`;
+    let lastFrameTimestamp = 0;
+    let animationFrame = 0;
+
+    const setSprite = (name: SpriteName, frame: number) => {
+      const frames = SPRITE_SETS[name];
+      const sprite = frames[frame % frames.length];
+
+      nekoEl.style.backgroundPosition = `${sprite[0] * SPRITE_SIZE}px ${
+        sprite[1] * SPRITE_SIZE
+      }px`;
+      nekoEl.dataset.sprite = name;
     };
 
-    paintFrame(sprite, IDLE_FRAME);
-
-    const seat = () => {
-      if (current.seated) return;
-      current.seated = true;
-      current.running = false;
-      paintFrame(sprite, IDLE_FRAME);
-      setSeated(true);
+    const resetIdleAnimation = () => {
+      idleAnimation = null;
+      idleAnimationFrame = 0;
     };
 
-    const wake = () => {
-      if (!current.seated) return;
-      current.seated = false;
-      setSeated(false);
+    const idle = () => {
+      idleTime += 1;
+
+      // every ~ 20 seconds
+      if (
+        idleTime > 10 &&
+        Math.floor(Math.random() * 200) === 0 &&
+        idleAnimation === null
+      ) {
+        const available: IdleAnimation[] = ["sleeping", "scratchSelf"];
+
+        if (nekoPosX < 32) available.push("scratchWallW");
+        if (nekoPosY < 32) available.push("scratchWallN");
+        if (nekoPosX > window.innerWidth - 32) available.push("scratchWallE");
+        if (nekoPosY > window.innerHeight - 32) available.push("scratchWallS");
+
+        idleAnimation =
+          available[Math.floor(Math.random() * available.length)];
+      }
+
+      switch (idleAnimation) {
+        case "sleeping":
+          if (idleAnimationFrame < 8) {
+            setSprite("tired", 0);
+            break;
+          }
+          setSprite("sleeping", Math.floor(idleAnimationFrame / 4));
+          if (idleAnimationFrame > 192) {
+            resetIdleAnimation();
+          }
+          break;
+        case "scratchWallN":
+        case "scratchWallS":
+        case "scratchWallE":
+        case "scratchWallW":
+        case "scratchSelf":
+          setSprite(idleAnimation, idleAnimationFrame);
+          if (idleAnimationFrame > 9) {
+            resetIdleAnimation();
+          }
+          break;
+        default:
+          setSprite("idle", 0);
+          return;
+      }
+
+      idleAnimationFrame += 1;
     };
 
-    const loop = (now: number) => {
-      current.frame = 0;
+    const frame = () => {
+      frameCount += 1;
 
-      const delta = current.last ? Math.min(48, now - current.last) : 16.7;
-      current.last = now;
+      const diffX = nekoPosX - mousePosX;
+      const diffY = nekoPosY - mousePosY;
+      const distance = Math.sqrt(diffX ** 2 + diffY ** 2);
 
-      const centerX = current.x + SPRITE_SIZE / 2;
-      const centerY = current.y + SPRITE_SIZE / 2;
-      const dx = current.pointerX - centerX;
-      const dy = current.pointerY - centerY;
-      const distance = Math.hypot(dx, dy);
-
-      if (distance <= SIT_DISTANCE) {
-        seat();
+      if (distance < NEKO_SPEED || distance < 48) {
+        idle();
         return;
       }
 
-      if (current.seated) {
-        current.running = false;
+      idleAnimation = null;
+      idleAnimationFrame = 0;
+
+      if (idleTime > 1) {
+        setSprite("alert", 0);
+        // count down after being alerted before moving
+        idleTime = Math.min(idleTime, 7);
+        idleTime -= 1;
         return;
       }
 
-      const stepX = (dx / distance) * SIT_DISTANCE;
-      const stepY = (dy / distance) * SIT_DISTANCE;
-      const targetX = clampX(current.pointerX - stepX - SPRITE_SIZE / 2);
-      const targetY = clampY(current.pointerY - stepY - SPRITE_SIZE / 2);
-      const moveX = targetX - current.x;
-      const moveY = targetY - current.y;
-      const remaining = Math.hypot(moveX, moveY);
+      let direction = "";
+      direction += diffY / distance > 0.5 ? "N" : "";
+      direction += diffY / distance < -0.5 ? "S" : "";
+      direction += diffX / distance > 0.5 ? "W" : "";
+      direction += diffX / distance < -0.5 ? "E" : "";
+      setSprite(direction as Direction, frameCount);
 
-      if (remaining <= 0.5) {
-        seat();
+      nekoPosX -= (diffX / distance) * NEKO_SPEED;
+      nekoPosY -= (diffY / distance) * NEKO_SPEED;
+
+      nekoPosX = Math.min(Math.max(16, nekoPosX), window.innerWidth - 16);
+      nekoPosY = Math.min(Math.max(16, nekoPosY), window.innerHeight - 16);
+
+      nekoEl.style.left = `${nekoPosX - 16}px`;
+      nekoEl.style.top = `${nekoPosY - 16}px`;
+    };
+
+    const onAnimationFrame = (timestamp: number) => {
+      // Stops execution if the neko element is removed from DOM
+      if (!nekoEl.isConnected) {
         return;
       }
 
-      const speed =
-        Math.min(MAX_SPEED, Math.max(1.2, remaining * EASE)) *
-        (delta / 16.7);
-      const step = Math.min(speed, remaining);
-      current.x += (moveX / remaining) * step;
-      current.y += (moveY / remaining) * step;
-      paint();
-
-      const frames = WALK_FRAMES[directionFor(moveX, moveY)];
-      paintFrame(sprite, frames[Math.floor(now / FRAME_MS) % frames.length]);
-      current.frame = requestAnimationFrame(loop);
-    };
-
-    const start = () => {
-      if (current.running) return;
-      current.running = true;
-      current.last = 0;
-      current.frame = requestAnimationFrame(loop);
-    };
-
-    const handleMove = (event: PointerEvent) => {
-      if (event.pointerType !== "mouse") return;
-
-      current.pointerX = event.clientX;
-      current.pointerY = event.clientY;
-
-      if (!current.seeded) {
-        current.seeded = true;
-        current.x = clampX(event.clientX - 300);
-        current.y = clampY(event.clientY + 200);
-        paint();
-        setVisible(true);
-        start();
-        return;
+      if (!lastFrameTimestamp) {
+        lastFrameTimestamp = timestamp;
       }
 
-      if (current.seated) {
-        const centerX = current.x + SPRITE_SIZE / 2;
-        const centerY = current.y + SPRITE_SIZE / 2;
-        const distance = Math.hypot(
-          current.pointerX - centerX,
-          current.pointerY - centerY
-        );
-
-        if (distance > WAKE_DISTANCE) {
-          wake();
-          start();
-        }
-        return;
+      if (timestamp - lastFrameTimestamp > FRAME_INTERVAL) {
+        lastFrameTimestamp = timestamp;
+        frame();
       }
 
-      start();
+      animationFrame = window.requestAnimationFrame(onAnimationFrame);
     };
 
-    const handleResize = () => {
-      current.x = clampX(current.x);
-      current.y = clampY(current.y);
-      paint();
+    const handleMouseMove = (event: MouseEvent) => {
+      mousePosX = event.clientX;
+      mousePosY = event.clientY;
     };
 
-    window.addEventListener("pointermove", handleMove, { passive: true });
-    window.addEventListener("resize", handleResize);
+    document.addEventListener("mousemove", handleMouseMove);
+    animationFrame = window.requestAnimationFrame(onAnimationFrame);
 
     return () => {
-      window.removeEventListener("pointermove", handleMove);
-      window.removeEventListener("resize", handleResize);
-      cancelAnimationFrame(current.frame);
-      current.running = false;
-      current.seated = false;
+      document.removeEventListener("mousemove", handleMouseMove);
+      window.cancelAnimationFrame(animationFrame);
     };
   }, [enabled]);
 
@@ -273,26 +274,26 @@ export default function CursorCompanion() {
 
   return (
     <div
-      ref={wrapRef}
+      ref={nekoRef}
+      id="oneko"
       aria-hidden="true"
       data-cursor-companion=""
-      data-seated={seated ? "true" : "false"}
-      className={`pointer-events-none fixed left-0 top-0 z-20 h-12 w-12 transition-opacity duration-300 will-change-transform ${
-        visible ? "opacity-100" : "opacity-0"
-      }`}
-    >
-      <span
-        ref={spriteRef}
-        className="block h-full w-full"
-        style={{
-          backgroundImage: "url('/oneko.gif')",
-          backgroundRepeat: "no-repeat",
-          backgroundSize: `${SPRITE_SIZE * SPRITE_COLUMNS}px ${
-            SPRITE_SIZE * SPRITE_ROWS
-          }px`,
-          imageRendering: "pixelated",
-        }}
-      />
-    </div>
+      data-sprite="idle"
+      style={{
+        position: "fixed",
+        left: START_POS - EDGE,
+        top: START_POS - EDGE,
+        width: SPRITE_SIZE,
+        height: SPRITE_SIZE,
+        pointerEvents: "none",
+        imageRendering: "pixelated",
+        zIndex: 20,
+        backgroundImage: "url('/oneko.gif')",
+        backgroundRepeat: "no-repeat",
+        backgroundSize: `${SPRITE_SIZE * SPRITE_COLUMNS}px ${
+          SPRITE_SIZE * SPRITE_ROWS
+        }px`,
+      }}
+    />
   );
 }
