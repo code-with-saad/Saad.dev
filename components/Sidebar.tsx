@@ -89,7 +89,8 @@ function Portrait() {
             alt="Portrait of Muhammad Saad"
             width={336}
             height={336}
-            quality={90}
+            sizes="168px"
+            quality={82}
             loading="eager"
             onError={() => setFailed(true)}
             className="h-full w-full object-cover"

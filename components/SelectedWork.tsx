@@ -67,7 +67,7 @@ function MediaContent({ project, sizes }: { project: Project; sizes: string }) {
       alt={`${project.name} screenshot`}
       fill
       sizes={sizes}
-      quality={90}
+      quality={82}
       className="object-contain object-center transition-transform duration-700 ease-out group-hover:scale-[1.015]"
     />
   );

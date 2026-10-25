@@ -14,6 +14,56 @@ import SelectedWork from "@/components/SelectedWork";
 import Sidebar from "@/components/Sidebar";
 import Stack from "@/components/Stack";
 import { SECTIONS } from "@/data/sections";
+import {
+  GITHUB_URL,
+  LINKEDIN_URL,
+  SITE_DESCRIPTION,
+  SITE_NAME,
+  SITE_URL,
+} from "@/data/site";
+
+const structuredData = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Person",
+      "@id": `${SITE_URL}/#person`,
+      name: SITE_NAME,
+      url: SITE_URL,
+      image: `${SITE_URL}/saad.jpg`,
+      jobTitle: "Full-Stack Developer",
+      description: SITE_DESCRIPTION,
+      address: {
+        "@type": "PostalAddress",
+        addressLocality: "Karachi",
+        addressCountry: "PK",
+      },
+      sameAs: [GITHUB_URL, LINKEDIN_URL],
+      knowsAbout: [
+        "Next.js",
+        "React",
+        "TypeScript",
+        "Node.js",
+        "Express",
+        "Python",
+        "FastAPI",
+        "Flutter",
+        "MongoDB",
+        "PostgreSQL",
+        "Docker",
+      ],
+    },
+    {
+      "@type": "WebSite",
+      "@id": `${SITE_URL}/#website`,
+      url: SITE_URL,
+      name: `${SITE_NAME} Portfolio`,
+      description: SITE_DESCRIPTION,
+      inLanguage: "en",
+      publisher: { "@id": `${SITE_URL}/#person` },
+    },
+  ],
+};
 
 export default function Home() {
   return (
@@ -57,6 +107,13 @@ export default function Home() {
           </div>
         </div>
       </div>
+
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(structuredData).replace(/</g, "\\u003c"),
+        }}
+      />
     </div>
   );
 }

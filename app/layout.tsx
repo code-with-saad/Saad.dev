@@ -1,9 +1,15 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import {
   Bricolage_Grotesque,
   Instrument_Sans,
   JetBrains_Mono,
 } from "next/font/google";
+import {
+  SITE_DESCRIPTION,
+  SITE_NAME,
+  SITE_TITLE,
+  SITE_URL,
+} from "@/data/site";
 import "./globals.css";
 
 const display = Bricolage_Grotesque({
@@ -30,26 +36,67 @@ const mono = JetBrains_Mono({
 const themeInitScript = `(function(){try{var s=localStorage.getItem("theme");var t=s==="light"||s==="dark"?s:(window.matchMedia("(prefers-color-scheme: light)").matches?"light":"dark");document.documentElement.dataset.theme=t;}catch(e){}})();`;
 
 export const metadata: Metadata = {
-  title: "Saad | Full-Stack Web Developer",
-  description: "Full-stack developer specializing in Next.js, React, Node.js, and web application management systems.",
-  keywords: ["Software Developer", "Full Stack Engineer", "Next.js", "React", "Node.js", "Web Developer Portfolio"],
-  authors: [{ name: "Saad" }],
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: SITE_TITLE,
+    template: `%s | ${SITE_NAME}`,
+  },
+  description: SITE_DESCRIPTION,
+  applicationName: `${SITE_NAME} Portfolio`,
+  authors: [{ name: SITE_NAME, url: SITE_URL }],
+  creator: SITE_NAME,
+  category: "technology",
+  keywords: [
+    "Muhammad Saad",
+    "full-stack developer",
+    "Next.js developer",
+    "React developer",
+    "Node.js",
+    "Python developer",
+    "Karachi",
+    "freelance web developer",
+  ],
+  alternates: { canonical: "/" },
   openGraph: {
-    title: "Saad | Full-Stack Web Developer",
-    description: "Full-stack developer building web applications, POS platforms, and management systems. Explore projects, engineering case studies, and skills.",
     type: "website",
     locale: "en_US",
-    siteName: "Saad Portfolio",
+    url: "/",
+    siteName: SITE_NAME,
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+    images: [
+      {
+        url: "/og.png",
+        width: 1200,
+        height: 630,
+        alt: "Muhammad Saad, full-stack developer: I build full stack products that hold up in production.",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Saad | Full-Stack Web Developer",
-    description: "CS student building web applications, POS platforms, and management systems. Explore projects, engineering case studies, and skills.",
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+    images: ["/og.png"],
   },
   robots: {
     index: true,
     follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
   },
+};
+
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#F4F2EE" },
+    { media: "(prefers-color-scheme: dark)", color: "#131614" },
+  ],
 };
 
 export default function RootLayout({
