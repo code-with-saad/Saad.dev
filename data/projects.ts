@@ -91,7 +91,7 @@ export const PROJECTS: Project[] = [
     description:
       "Multi-role event and expo management SaaS, built with React, Node, Express and MongoDB.",
     tech: ["React", "Node.js", "Express", "MongoDB"],
-    image: null,
+    image: "/projects/eventsphere.png",
     live: null,
     github: "https://github.com/code-with-saad/eventsphere",
     featured: true,
@@ -106,7 +106,7 @@ export const PROJECTS: Project[] = [
     description:
       "E-commerce store with Stripe checkout and admin analytics. Built during the CodeAlpha internship.",
     tech: ["React", "Node.js", "Express", "MongoDB", "Stripe"],
-    image: null,
+    image: "/projects/nexoria.png",
     live: "https://codealpha-nexoria.vercel.app/",
     github: "https://github.com/code-with-saad/CodeAlpha_Nexoria",
     featured: false,
@@ -121,7 +121,7 @@ export const PROJECTS: Project[] = [
     description:
       "Project management tool with real-time updates over WebSocket. Built during the CodeAlpha internship.",
     tech: ["React", "Node.js", "Express", "MongoDB", "WebSocket"],
-    image: null,
+    image: "/projects/huddle.png",
     live: "https://huddle-xyz.vercel.app/",
     github: "https://github.com/code-with-saad/CodeAlpha_Huddle",
     featured: false,
@@ -136,7 +136,7 @@ export const PROJECTS: Project[] = [
     description:
       "Social platform with profiles, posts, comments, likes and follows. Built during the CodeAlpha internship.",
     tech: ["React", "Node.js", "Express", "MongoDB"],
-    image: null,
+    image: "/projects/circl.png",
     live: "https://codealpha-circl.vercel.app/",
     github: "https://github.com/code-with-saad/CodeAlpha_Circl",
     featured: false,
@@ -150,7 +150,7 @@ export const PROJECTS: Project[] = [
     tagline: "Farmers market platform",
     description: "Farmers market platform built for TechWiz 7.",
     tech: ["React", "Node.js", "Express", "MongoDB"],
-    image: null,
+    image: "/projects/marketlink.png",
     live: null,
     github: "https://github.com/code-with-saad/FBA_Omniverse",
     featured: false,
