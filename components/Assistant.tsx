@@ -1,223 +1,181 @@
 "use client";
 
 import {
+  useCallback,
   useEffect,
   useRef,
   useState,
   type FormEvent,
 } from "react";
 import {
+  LuArrowRight,
   LuArrowUp,
+  LuArrowUpRight,
   LuMessageCircle,
   LuRotateCcw,
   LuX,
 } from "react-icons/lu";
+import {
+  answerFor,
+  GREETING,
+  SUGGESTIONS,
+  type AssistantLink,
+} from "@/data/assistant";
 
-const EMAIL = "saadkashif770@gmail.com";
-const PHONE_DISPLAY = "+92 335 3132747";
-
-const GREETING =
-  "Hi! I'm Saad's portfolio assistant. Ask me about his work, experience, stack or availability.";
-
-const FALLBACK =
-  "I only know what's on this site. I can answer questions about projects, stack, experience, education, availability and contact details. For anything else, email saadkashif770@gmail.com.";
-
-type Reply = {
-  keywords: string[];
-  answer: string;
-};
-
-const REPLIES: Reply[] = [
-  {
-    keywords: [
-      "project",
-      "projects",
-      "built",
-      "build",
-      "portfolio",
-      "palettero",
-      "dinepine",
-      "nexoria",
-      "circl",
-      "huddle",
-      "eventsphere",
-      "marketlink",
-      "a1 uniforms",
-      "covid care",
-      "case study",
-    ],
-    answer:
-      "Nine projects are listed on the site. Highlights are Palettero (AI color and theme tool), DinePine (restaurant POS with cashier, kitchen and admin screens), EventSphere (event management), Nexoria (e-commerce with Stripe checkout), Circl (social platform) and Huddle (real-time project management). Earlier work includes A1 Uniforms, COVID Care and MarketLink. The Selected work section has screenshots and links.",
-  },
-  {
-    keywords: [
-      "experience",
-      "worked",
-      "work experience",
-      "internship",
-      "codealpha",
-      "aptech",
-      "education",
-      "studying",
-      "student",
-      "diploma",
-      "coursework",
-    ],
-    answer:
-      "He is a Full Stack Development Intern at CodeAlpha, where he built Nexoria, Circl and Huddle. He is also studying for an Advanced Diploma in Software Engineering at Aptech in Karachi, from 2024 to present.",
-  },
-  {
-    keywords: [
-      "available",
-      "availability",
-      "hire",
-      "hiring",
-      "job",
-      "role",
-      "roles",
-      "opportunity",
-      "opportunities",
-      "open to",
-      "freelance",
-      "full-time",
-      "full time",
-    ],
-    answer:
-      "He is open to internships and full-time full stack roles. Email or WhatsApp is the fastest way to start a conversation.",
-  },
-  {
-    keywords: [
-      "learning",
-      "currently",
-      "current",
-      "building",
-      "working on",
-      "fastapi",
-      "docker",
-    ],
-    answer:
-      "He is currently building Palettero, an AI color and theme tool, and learning FastAPI, PostgreSQL and Docker.",
-  },
-  {
-    keywords: [
-      "stack",
-      "tech",
-      "technology",
-      "technologies",
-      "language",
-      "languages",
-      "framework",
-      "frameworks",
-      "react",
-      "next.js",
-      "node.js",
-      "express",
-      "database",
-      "databases",
-      "mongodb",
-      "postgresql",
-      "mysql",
-      "redis",
-      "supabase",
-      "tailwind",
-      "flutter",
-    ],
-    answer:
-      "Front end: React, Next.js, Flutter and Tailwind CSS. Back end: Node.js, Express and FastAPI. Data: MongoDB, PostgreSQL, MySQL, Redis and Supabase. He also works with Vercel, Render, Cloudflare, Postman, Docker and GitHub Actions.",
-  },
-  {
-    keywords: [
-      "contact",
-      "email",
-      "e-mail",
-      "mail",
-      "reach",
-      "phone",
-      "whatsapp",
-      "number",
-      "linkedin",
-      "github",
-      "resume",
-      "cv",
-    ],
-    answer: `Email: ${EMAIL}. WhatsApp: ${PHONE_DISPLAY}. LinkedIn: linkedin.com/in/codewithsaad. GitHub: github.com/code-with-saad. You can also download his resume from the contact card.`,
-  },
-  {
-    keywords: [
-      "located",
-      "location",
-      "based",
-      "karachi",
-      "pakistan",
-      "city",
-      "country",
-      "relocate",
-    ],
-    answer: "He is based in Karachi, Pakistan.",
-  },
-  {
-    keywords: ["who", "about", "bio", "introduce", "yourself", "name"],
-    answer:
-      "Saad is a software engineering student at Aptech in Karachi and a full stack developer. He builds complete web apps, from authentication and database design to admin screens and deployment.",
-  },
-  {
-    keywords: ["reply", "respond", "response", "how long", "quickly", "hear back"],
-    answer:
-      "He usually replies within a day or two. Email and WhatsApp are the fastest.",
-  },
-  {
-    keywords: ["rate", "rates", "price", "pricing", "cost", "charge", "budget", "salary"],
-    answer:
-      "Rates are not listed on this site. Ask Saad directly by email or WhatsApp.",
-  },
-];
-
-const SUGGESTIONS = [
-  "What has Saad built?",
-  "What's his stack?",
-  "Is he available?",
-  "How do I reach him?",
-];
-
-function answerFor(input: string) {
-  const text = input.toLowerCase();
-
-  if (/(^|\W)(hi|hello|hey|salam|assalam)(\W|$)/.test(text)) {
-    return "Hey! Ask me about Saad's work, experience, stack, availability or how to reach him.";
-  }
-
-  let best: Reply | null = null;
-  let bestScore = 0;
-
-  for (const reply of REPLIES) {
-    let score = 0;
-
-    for (const keyword of reply.keywords) {
-      if (text.includes(keyword)) score += 1;
-    }
-
-    if (score > bestScore) {
-      best = reply;
-      bestScore = score;
-    }
-  }
-
-  return best ? best.answer : FALLBACK;
-}
-
-type Message = {
+type ChatMessage = {
   id: number;
   role: "assistant" | "user";
   text: string;
+  links?: AssistantLink[];
+  animate?: boolean;
 };
 
-const INITIAL_MESSAGES: Message[] = [
-  { id: 1, role: "assistant", text: GREETING },
-];
+const TYPING_TICKS = 60;
+const TYPING_SPEED = 20;
+const REPLY_DELAY = 380;
+
+const CHIP_CLASS =
+  "inline-flex max-w-full items-center gap-1 rounded-md border border-line bg-canvas px-2 py-1 font-mono text-[10px] leading-[1.4] text-ink transition-colors hover:border-accent hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent";
+
+function AnswerChip({
+  link,
+  onNavigate,
+}: {
+  link: AssistantLink;
+  onNavigate: (href: string) => void;
+}) {
+  if (link.href.startsWith("#")) {
+    return (
+      <button
+        type="button"
+        onClick={() => onNavigate(link.href)}
+        className={CHIP_CLASS}
+      >
+        {link.label}
+        <LuArrowRight className="h-3 w-3 shrink-0" aria-hidden="true" />
+      </button>
+    );
+  }
+
+  if (link.href.endsWith(".pdf")) {
+    return (
+      <a href={link.href} download className={CHIP_CLASS}>
+        {link.label}
+        <LuArrowRight className="h-3 w-3 shrink-0" aria-hidden="true" />
+      </a>
+    );
+  }
+
+  return (
+    <a
+      href={link.href}
+      target="_blank"
+      rel="noopener noreferrer"
+      className={CHIP_CLASS}
+    >
+      <span className="truncate">{link.label}</span>
+      <LuArrowUpRight className="h-3 w-3 shrink-0" aria-hidden="true" />
+    </a>
+  );
+}
+
+type AnswerBubbleProps = {
+  message: ChatMessage;
+  onDone: (id: number) => void;
+  onProgress: () => void;
+  onNavigate: (href: string) => void;
+};
+
+function AnswerBubble({
+  message,
+  onDone,
+  onProgress,
+  onNavigate,
+}: AnswerBubbleProps) {
+  const [typed, setTyped] = useState(() => {
+    if (!message.animate) return message.text.length;
+
+    if (
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    ) {
+      return message.text.length;
+    }
+
+    return 0;
+  });
+  const finished = useRef(!message.animate);
+
+  const total = message.text.length;
+  const shown = message.animate ? Math.min(typed, total) : total;
+  const complete = shown >= total;
+
+  useEffect(() => {
+    if (!message.animate || complete) return;
+
+    const step = Math.max(1, Math.ceil(total / TYPING_TICKS));
+    const timer = window.setInterval(() => {
+      setTyped((current) => Math.min(total, current + step));
+    }, TYPING_SPEED);
+
+    return () => window.clearInterval(timer);
+  }, [message.animate, complete, total]);
+
+  useEffect(() => {
+    onProgress();
+
+    if (shown >= total && !finished.current) {
+      finished.current = true;
+      onDone(message.id);
+    }
+  }, [message.id, onDone, onProgress, shown, total]);
+
+  return (
+    <div className="min-w-0 max-w-[calc(100%-36px)] rounded-xl rounded-tl-sm border border-line bg-surface-2 px-3.5 py-2.5">
+      <p className="text-[13px] leading-[1.6] text-ink">
+        <span aria-hidden={complete ? undefined : true}>
+          {message.text.slice(0, shown)}
+        </span>
+        {complete ? null : (
+          <span
+            aria-hidden="true"
+            className="ml-0.5 inline-block h-3 w-[2px] translate-y-[2px] animate-pulse bg-accent"
+          />
+        )}
+        {complete ? null : <span className="sr-only">{message.text}</span>}
+      </p>
+
+      {complete && message.links?.length ? (
+        <div className="mt-2.5 flex flex-wrap gap-1.5">
+          {message.links.map((link) => (
+            <AnswerChip
+              key={`${link.label}-${link.href}`}
+              link={link}
+              onNavigate={onNavigate}
+            />
+          ))}
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+function AssistantAvatar() {
+  return (
+    <span
+      aria-hidden="true"
+      className="mb-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-md border border-line bg-canvas font-display text-[9px] font-extrabold tracking-[-0.02em] text-muted"
+    >
+      MS
+    </span>
+  );
+}
 
 export default function Assistant() {
   const [open, setOpen] = useState(false);
-  const [messages, setMessages] = useState<Message[]>(INITIAL_MESSAGES);
+  const [messages, setMessages] = useState<ChatMessage[]>([
+    { id: 1, role: "assistant", text: GREETING, animate: true },
+  ]);
   const [input, setInput] = useState("");
   const [pending, setPending] = useState(false);
 
@@ -227,10 +185,41 @@ export default function Assistant() {
   const idRef = useRef(1);
   const timerRef = useRef<number | null>(null);
 
-  const nextId = () => {
+  const nextId = useCallback(() => {
     idRef.current += 1;
     return idRef.current;
-  };
+  }, []);
+
+  const scrollToBottom = useCallback(() => {
+    const list = listRef.current;
+    if (list) list.scrollTop = list.scrollHeight;
+  }, []);
+
+  const markTyped = useCallback((id: number) => {
+    setMessages((current) =>
+      current.map((message) =>
+        message.id === id ? { ...message, animate: false } : message
+      )
+    );
+  }, []);
+
+  const handleNavigate = useCallback((href: string) => {
+    const target = document.getElementById(href.slice(1));
+    if (!target) return;
+
+    setOpen(false);
+
+    const reduce = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
+
+    window.requestAnimationFrame(() => {
+      target.scrollIntoView({
+        behavior: reduce ? "auto" : "smooth",
+        block: "start",
+      });
+    });
+  }, []);
 
   useEffect(() => {
     if (!open) return;
@@ -252,9 +241,8 @@ export default function Assistant() {
   }, [open]);
 
   useEffect(() => {
-    const list = listRef.current;
-    if (list) list.scrollTop = list.scrollHeight;
-  }, [messages, pending]);
+    scrollToBottom();
+  }, [messages, pending, scrollToBottom]);
 
   useEffect(
     () => () => {
@@ -268,20 +256,30 @@ export default function Assistant() {
     if (!text || pending) return;
 
     setMessages((current) => [
-      ...current,
+      ...current.map((message) =>
+        message.animate ? { ...message, animate: false } : message
+      ),
       { id: nextId(), role: "user", text },
     ]);
     setInput("");
     setPending(true);
 
     timerRef.current = window.setTimeout(() => {
+      const answer = answerFor(text);
+
       setMessages((current) => [
         ...current,
-        { id: nextId(), role: "assistant", text: answerFor(text) },
+        {
+          id: nextId(),
+          role: "assistant",
+          text: answer.text,
+          links: answer.links,
+          animate: true,
+        },
       ]);
       setPending(false);
       timerRef.current = null;
-    }, 550);
+    }, REPLY_DELAY);
   };
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
@@ -294,7 +292,11 @@ export default function Assistant() {
       window.clearTimeout(timerRef.current);
       timerRef.current = null;
     }
-    setMessages(INITIAL_MESSAGES);
+
+    idRef.current += 1;
+    setMessages([
+      { id: idRef.current, role: "assistant", text: GREETING, animate: true },
+    ]);
     setInput("");
     setPending(false);
     inputRef.current?.focus();
@@ -313,10 +315,13 @@ export default function Assistant() {
         onClick={() => setOpen((value) => !value)}
         aria-expanded={open}
         aria-controls="portfolio-assistant"
-        className="fixed bottom-5 right-5 z-50 inline-flex h-11 items-center gap-2 rounded-full bg-accent px-4 text-[13px] font-semibold text-accent-ink transition-colors duration-200 hover:bg-accent-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-canvas"
+        aria-label="Ask about Saad"
+        className="fixed bottom-[calc(72px+env(safe-area-inset-bottom))] right-4 z-50 inline-flex h-12 w-12 items-center justify-center rounded-full bg-accent text-accent-ink transition-colors duration-200 hover:bg-accent-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-canvas min-[900px]:bottom-5 min-[900px]:right-5 min-[900px]:h-11 min-[900px]:w-auto min-[900px]:gap-2 min-[900px]:px-4"
       >
         <LuMessageCircle className="h-4 w-4" aria-hidden="true" />
-        Ask about Saad
+        <span className="hidden text-[13px] font-semibold min-[900px]:inline">
+          Ask about Saad
+        </span>
       </button>
 
       {open && (
@@ -324,9 +329,9 @@ export default function Assistant() {
           id="portfolio-assistant"
           role="dialog"
           aria-label="Portfolio assistant"
-          className="fixed bottom-[76px] right-5 z-50 flex max-h-[calc(100dvh-120px)] w-[calc(100vw-40px)] max-w-[380px] flex-col overflow-hidden rounded-2xl border border-line bg-surface"
+          className="fixed bottom-[calc(136px+env(safe-area-inset-bottom))] right-4 z-50 flex max-h-[calc(100dvh-168px)] w-[calc(100vw-32px)] max-w-[380px] flex-col overflow-hidden rounded-2xl border border-line bg-surface min-[900px]:bottom-[76px] min-[900px]:right-5 min-[900px]:max-h-[calc(100dvh-120px)] min-[900px]:w-[calc(100vw-40px)]"
         >
-          <div className="flex items-center gap-3 border-b border-line px-4 py-3">
+          <div className="flex shrink-0 items-center gap-3 border-b border-line px-4 py-3">
             <div className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-accent-soft font-display text-[12px] font-extrabold tracking-[-0.02em] text-accent">
               MS
               <span
@@ -369,27 +374,29 @@ export default function Assistant() {
             aria-label="Conversation"
             className="min-h-0 flex-1 space-y-3 overflow-y-auto px-4 py-4"
           >
-            {messages.map((message) => (
-              <div
-                key={message.id}
-                className={
-                  message.role === "user" ? "flex justify-end" : "flex justify-start"
-                }
-              >
-                <p
-                  className={
-                    message.role === "user"
-                      ? "max-w-[85%] rounded-xl rounded-br-sm bg-accent px-3.5 py-2.5 text-[13px] font-medium leading-[1.6] text-accent-ink"
-                      : "max-w-[88%] rounded-xl rounded-tl-sm border border-line bg-surface-2 px-3.5 py-2.5 text-[13px] leading-[1.6] text-ink"
-                  }
-                >
-                  {message.text}
-                </p>
-              </div>
-            ))}
+            {messages.map((message) =>
+              message.role === "assistant" ? (
+                <div key={message.id} className="flex items-end gap-2">
+                  <AssistantAvatar />
+                  <AnswerBubble
+                    message={message}
+                    onDone={markTyped}
+                    onProgress={scrollToBottom}
+                    onNavigate={handleNavigate}
+                  />
+                </div>
+              ) : (
+                <div key={message.id} className="flex justify-end">
+                  <p className="max-w-[85%] rounded-xl rounded-br-sm bg-accent px-3.5 py-2.5 text-[13px] font-medium leading-[1.6] text-accent-ink">
+                    {message.text}
+                  </p>
+                </div>
+              )
+            )}
 
             {pending && (
-              <div className="flex justify-start">
+              <div className="flex items-end gap-2">
+                <AssistantAvatar />
                 <p className="rounded-xl rounded-tl-sm border border-line bg-surface-2 px-3.5 py-2.5 font-mono text-[10px] uppercase tracking-[0.14em] text-muted">
                   Thinking
                 </p>
@@ -397,7 +404,7 @@ export default function Assistant() {
             )}
           </div>
 
-          <div className="flex gap-2 overflow-x-auto px-4 pb-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          <div className="flex shrink-0 gap-2 overflow-x-auto px-4 pb-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             {SUGGESTIONS.map((suggestion) => (
               <button
                 key={suggestion}
@@ -413,14 +420,14 @@ export default function Assistant() {
 
           <form
             onSubmit={handleSubmit}
-            className="flex items-center gap-2 border-t border-line px-3 py-3"
+            className="flex shrink-0 items-center gap-2 border-t border-line px-3 py-3"
           >
             <input
               ref={inputRef}
               type="text"
               value={input}
               onChange={(event) => setInput(event.target.value)}
-              placeholder="Ask about his work, stack, availability..."
+              placeholder="Ask about a project, stack or contact..."
               aria-label="Message"
               autoComplete="off"
               className="h-10 min-w-0 flex-1 rounded-lg border border-line bg-canvas px-3 text-[16px] text-ink outline-none transition-colors placeholder:text-muted focus:border-line-strong min-[480px]:text-[13px]"

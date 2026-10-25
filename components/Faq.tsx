@@ -1,43 +1,6 @@
 import { LuPlus } from "react-icons/lu";
 import Reveal from "@/components/Reveal";
-
-type FaqItem = {
-  question: string;
-  answer: string;
-};
-
-const FAQS: FaqItem[] = [
-  {
-    question: "What kind of roles are you open to?",
-    answer:
-      "Internships and full-time roles in full stack development. I am based in Karachi, and the fastest way to reach me is email or WhatsApp.",
-  },
-  {
-    question: "What is your main stack?",
-    answer:
-      "TypeScript, JavaScript, React, Next.js and Tailwind CSS on the front end. Node.js, Express and FastAPI on the back end, with MongoDB, PostgreSQL, MySQL, Redis and Supabase for data. I ship with Vercel, Render, Cloudflare, Docker and GitHub Actions.",
-  },
-  {
-    question: "Which projects are live?",
-    answer:
-      "Palettero, DinePine, Nexoria, Circl, Huddle and A1 Uniforms have live links on their cards in Selected work. EventSphere, MarketLink and COVID Care are on GitHub.",
-  },
-  {
-    question: "Are you available for freelance work?",
-    answer:
-      "I am open to internships and full-time roles. For project work, email me the scope and timeline and I will tell you if it fits.",
-  },
-  {
-    question: "How quickly do you reply?",
-    answer:
-      "I read every message and usually reply within a day or two. Email and WhatsApp are the fastest.",
-  },
-  {
-    question: "Can I download your resume?",
-    answer:
-      "Yes. The resume PDF link is in the contact card and the sidebar.",
-  },
-];
+import { FAQS } from "@/data/faqs";
 
 export default function Faq() {
   return (
