@@ -289,7 +289,8 @@ export default function CursorCompanion() {
         height: SPRITE_SIZE,
         pointerEvents: "none",
         imageRendering: "pixelated",
-        zIndex: 20,
+        // Above the fixed site chrome (40), below dialogs and the assistant (50).
+        zIndex: 45,
         backgroundImage: "url('/oneko.gif')",
         backgroundRepeat: "no-repeat",
         backgroundSize: `${SPRITE_SIZE * SPRITE_COLUMNS}px ${
