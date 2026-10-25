@@ -95,6 +95,7 @@ export const PROJECTS: Project[] = [
     image: "/projects/eventsphere.png",
     live: null,
     github: "https://github.com/code-with-saad/eventsphere",
+    post: "https://www.linkedin.com/feed/update/urn:li:activity:7503135119826837504/",
     featured: true,
     group: "main",
   },
