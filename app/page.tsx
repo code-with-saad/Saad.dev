@@ -1,5 +1,7 @@
 import About from "@/components/About";
+import Contact from "@/components/Contact";
 import Experience from "@/components/Experience";
+import Footer from "@/components/Footer";
 import Intro from "@/components/Intro";
 import ScrollProgress from "@/components/ScrollProgress";
 import SectionShell from "@/components/SectionShell";
@@ -14,30 +16,35 @@ export default function Home() {
       <ScrollProgress />
       <Sidebar />
 
-      <main id="main-content" className="min-[900px]:ml-80">
+      <div className="min-[900px]:ml-80">
         <div className="min-[900px]:pl-[78px] min-[900px]:pr-10">
-          <div className="mx-auto max-w-[900px] px-5 py-8 min-[900px]:mx-0 min-[900px]:px-0 min-[900px]:py-20">
-            <div className="divide-y divide-line">
-              {SECTIONS.map(({ id, index, label }) => {
-                if (id === "intro") return <Intro key={id} />;
-                if (id === "about") return <About key={id} />;
-                if (id === "work") return <SelectedWork key={id} />;
-                if (id === "experience") return <Experience key={id} />;
-                if (id === "stack") return <Stack key={id} />;
+          <div className="mx-auto max-w-[900px] px-5 pt-8 min-[900px]:mx-0 min-[900px]:px-0 min-[900px]:pt-20">
+            <main id="main-content">
+              <div className="divide-y divide-line">
+                {SECTIONS.map(({ id, index, label }) => {
+                  if (id === "intro") return <Intro key={id} />;
+                  if (id === "about") return <About key={id} />;
+                  if (id === "work") return <SelectedWork key={id} />;
+                  if (id === "experience") return <Experience key={id} />;
+                  if (id === "stack") return <Stack key={id} />;
+                  if (id === "contact") return <Contact key={id} />;
 
-                return (
-                  <SectionShell
-                    key={id}
-                    id={id}
-                    index={index}
-                    label={label}
-                  />
-                );
-              })}
-            </div>
+                  return (
+                    <SectionShell
+                      key={id}
+                      id={id}
+                      index={index}
+                      label={label}
+                    />
+                  );
+                })}
+              </div>
+            </main>
+
+            <Footer />
           </div>
         </div>
-      </main>
+      </div>
     </div>
   );
 }
