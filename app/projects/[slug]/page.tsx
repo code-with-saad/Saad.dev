@@ -10,6 +10,7 @@ import {
   LuGlobe,
   LuLinkedin,
 } from "react-icons/lu";
+import StackUsed from "@/components/StackUsed";
 import { PROJECTS } from "@/data/projects";
 
 export const dynamicParams = false;
@@ -256,27 +257,7 @@ export default async function ProjectPage({
         </div>
       </section>
 
-      <section
-        aria-labelledby="stack-title"
-        className="mt-10 border-t border-line pt-8"
-      >
-        <h2
-          id="stack-title"
-          className="font-mono text-[10px] font-medium uppercase tracking-[0.18em] text-muted"
-        >
-          Stack used
-        </h2>
-        <ul className="mt-5 flex flex-wrap gap-2">
-          {project.tech.map((item) => (
-            <li
-              key={item}
-              className="rounded border border-line bg-surface px-2.5 py-1.5 font-mono text-[11px] leading-none text-muted"
-            >
-              {item}
-            </li>
-          ))}
-        </ul>
-      </section>
+      <StackUsed tech={project.tech} />
 
       {project.hardCalls?.length ? (
         <section
