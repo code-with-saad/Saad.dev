@@ -1,6 +1,7 @@
 import About from "@/components/About";
 import Assistant from "@/components/Assistant";
 import Contact from "@/components/Contact";
+import CursorCompanion from "@/components/CursorCompanion";
 import Experience from "@/components/Experience";
 import Faq from "@/components/Faq";
 import Footer from "@/components/Footer";
@@ -21,6 +22,7 @@ export default function Home() {
       <Sidebar />
       <MobileNav />
       <Assistant />
+      <CursorCompanion />
       <GoToTop />
 
       <div className="min-[900px]:ml-80">
