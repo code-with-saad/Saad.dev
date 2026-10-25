@@ -33,7 +33,10 @@ export default function About() {
           tools and check their output myself, because I only ship code I
           understand. I&apos;d rather ship something small end to end than half-finish
           something impressive. Right now I&apos;m open to{" "}
-          <strong className="text-ink">internships and full-time roles</strong>.
+          <strong className="text-ink">
+            internships, full-time roles and freelance projects
+          </strong>
+          .
         </p>
       </Reveal>
     </section>

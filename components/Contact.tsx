@@ -79,7 +79,8 @@ export default function Contact() {
                 className="mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full bg-accent"
               />
               <span>
-                Open to internships and full-time roles. Karachi, PK
+                Open to internships, full-time roles and freelance projects.
+                Karachi, PK
               </span>
             </p>
           </div>

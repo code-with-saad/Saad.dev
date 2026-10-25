@@ -8,7 +8,7 @@ export const FAQS: FaqItem[] = [
   {
     question: "What kind of roles are you open to?",
     answer:
-      "Internships and full-time roles in full stack development. I am based in Karachi, and the fastest way to reach me is email or WhatsApp.",
+      "Internships, full-time roles and freelance projects in full stack development. I am based in Karachi, and the fastest way to reach me is email or WhatsApp.",
     keywords: ["roles", "role", "open to", "career", "full time", "internship"],
   },
   {
@@ -26,7 +26,7 @@ export const FAQS: FaqItem[] = [
   {
     question: "Are you available for freelance work?",
     answer:
-      "I am open to internships and full-time roles. For project work, email me the scope and timeline and I will tell you if it fits.",
+      "Yes. I take on freelance project work alongside internships and full-time roles. Email me the scope and timeline and I will tell you if it fits.",
     keywords: ["freelance", "freelancing", "contract", "project work"],
   },
   {

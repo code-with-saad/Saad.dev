@@ -30,7 +30,8 @@ export default function Intro() {
           apps with MERN and Postgres, from login and database to admin panel and
           deployment. DinePine, my restaurant POS with cashier, kitchen and admin
           screens, is live. I also shipped three CodeAlpha internship projects and
-          two team submissions. Open to internships and full-time roles.
+          two team submissions. Open to internships, full-time roles and freelance
+          projects.
         </p>
 
         <ul className="mt-10 grid grid-cols-3 gap-6">
