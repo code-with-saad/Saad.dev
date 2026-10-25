@@ -84,6 +84,7 @@ export default async function ProjectPage({
   if (index === -1) notFound();
 
   const project = PROJECTS[index];
+  const previousProject = PROJECTS[(index - 1 + PROJECTS.length) % PROJECTS.length];
   const nextProject = PROJECTS[(index + 1) % PROJECTS.length];
   const gallery = project.gallery?.length
     ? project.gallery
@@ -269,19 +270,38 @@ export default async function ProjectPage({
       ) : null}
 
       <nav
-        aria-label="Next project"
-        className="mt-12 border-t border-line pt-6"
+        aria-label="Project navigation"
+        className="mt-12 grid grid-cols-1 gap-x-8 gap-y-7 border-t border-line pt-6 min-[600px]:grid-cols-2"
       >
+        <RevealLink
+          href={`/projects/${previousProject.slug}`}
+          revealSelector={`[data-project-slug="${previousProject.slug}"]`}
+          className={`group flex items-center gap-4 rounded-lg ${FOCUS_RING}`}
+        >
+          <LuArrowLeft
+            className="h-5 w-5 shrink-0 text-muted transition-[color,transform] duration-200 group-hover:-translate-x-1 group-hover:text-accent"
+            aria-hidden="true"
+          />
+          <span>
+            <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-muted">
+              Previous project
+            </span>
+            <span className="mt-1.5 block font-display text-[22px] font-extrabold tracking-[-0.03em] text-ink transition-colors group-hover:text-accent min-[900px]:text-[26px]">
+              {previousProject.name}
+            </span>
+          </span>
+        </RevealLink>
+
         <RevealLink
           href={`/projects/${nextProject.slug}`}
           revealSelector={`[data-project-slug="${nextProject.slug}"]`}
-          className={`group flex items-center justify-between gap-4 rounded-lg ${FOCUS_RING}`}
+          className={`group flex items-center justify-end gap-4 rounded-lg text-right ${FOCUS_RING}`}
         >
           <span>
             <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-muted">
               Next project
             </span>
-            <span className="mt-1.5 block font-display text-[26px] font-extrabold tracking-[-0.03em] text-ink transition-colors group-hover:text-accent">
+            <span className="mt-1.5 block font-display text-[22px] font-extrabold tracking-[-0.03em] text-ink transition-colors group-hover:text-accent min-[900px]:text-[26px]">
               {nextProject.name}
             </span>
           </span>
