@@ -8,6 +8,7 @@ import Footer from "@/components/Footer";
 import GoToTop from "@/components/GoToTop";
 import Intro from "@/components/Intro";
 import MobileNav from "@/components/MobileNav";
+import Quote from "@/components/Quote";
 import ScrollProgress from "@/components/ScrollProgress";
 import SectionShell from "@/components/SectionShell";
 import SelectedWork from "@/components/SelectedWork";
@@ -99,9 +100,11 @@ export default function Home() {
                   );
                 })}
               </div>
+
+              <Quote />
             </main>
 
-            <div className="pb-28">
+            <div className="pb-[calc(4.5rem+env(safe-area-inset-bottom))] min-[900px]:pb-0">
               <Footer />
             </div>
           </div>
