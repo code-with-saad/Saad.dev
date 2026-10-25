@@ -87,7 +87,12 @@ export default async function ProjectPage({
 
   const actions = [
     { key: "github", label: "GitHub", href: project.github, Icon: LuGithub },
-    { key: "live", label: "Live", href: project.live, Icon: LuGlobe },
+    {
+      key: "live",
+      label: "Website",
+      href: project.live,
+      Icon: LuGlobe,
+    },
     {
       key: "post",
       label: "Post",
@@ -109,54 +114,7 @@ export default async function ProjectPage({
         All projects
       </Link>
 
-      <header className="mt-9">
-        <p className="eyebrow text-accent">
-          <span aria-hidden="true" className="h-px w-8 bg-accent" />
-          Case study
-        </p>
-
-        <h1 className="mt-4 font-display text-[clamp(2.5rem,7vw,4.25rem)] font-extrabold leading-[1.01] tracking-[-0.04em] text-ink">
-          {project.name}
-        </h1>
-        <p className="mt-4 max-w-[62ch] text-[17px] leading-[1.6] text-ink">
-          {project.tagline}
-        </p>
-
-        <dl className="mt-8 flex flex-wrap items-start gap-x-10 gap-y-4 border-y border-line py-4">
-          <div>
-            <dt className="font-mono text-[10px] uppercase tracking-[0.16em] text-muted">
-              Year
-            </dt>
-            <dd className="mt-1 text-[14px] text-ink">{project.year}</dd>
-          </div>
-          <div>
-            <dt className="font-mono text-[10px] uppercase tracking-[0.16em] text-muted">
-              Type
-            </dt>
-            <dd className="mt-1 text-[14px] text-ink">
-              {project.categories.join(" / ")}
-            </dd>
-          </div>
-          {project.live ? (
-            <div className="ml-auto">
-              <dt className="sr-only">Website</dt>
-              <dd>
-                <a
-                  href={project.live}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={`inline-flex items-center gap-1.5 rounded-sm text-[14px] font-medium text-ink transition-colors hover:text-accent ${FOCUS_RING}`}
-                >
-                  Visit site
-                  <LuArrowUpRight className="h-3.5 w-3.5" aria-hidden="true" />
-                </a>
-              </dd>
-            </div>
-          ) : null}
-        </dl>
-      </header>
-
-      <figure className="mt-10">
+      <figure className="mt-8">
         <div className="overflow-hidden rounded-xl border border-line bg-surface">
           <div className="flex items-center gap-2 border-b border-line px-4 py-3">
             <span className="flex items-center gap-1.5" aria-hidden="true">
@@ -243,6 +201,44 @@ export default async function ProjectPage({
           );
         })}
       </div>
+
+      <header className="mt-9">
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-3">
+          <h1 className="font-display text-[clamp(2.5rem,7vw,4.25rem)] font-extrabold leading-[1.01] tracking-[-0.04em] text-ink">
+            {project.name}
+          </h1>
+          {project.live ? (
+            <span className="inline-flex items-center gap-2 rounded-full border border-line bg-surface px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.16em] text-accent">
+              <span
+                aria-hidden="true"
+                className="h-1.5 w-1.5 rounded-full bg-accent"
+              />
+              Live
+            </span>
+          ) : null}
+        </div>
+
+        <dl className="mt-6 flex flex-wrap items-start gap-x-10 gap-y-4 border-y border-line py-4">
+          <div>
+            <dt className="font-mono text-[10px] uppercase tracking-[0.16em] text-muted">
+              Year
+            </dt>
+            <dd className="mt-1 text-[14px] text-ink">{project.year}</dd>
+          </div>
+          <div>
+            <dt className="font-mono text-[10px] uppercase tracking-[0.16em] text-muted">
+              Type
+            </dt>
+            <dd className="mt-1 text-[14px] text-ink">
+              {project.categories.join(" / ")}
+            </dd>
+          </div>
+        </dl>
+
+        <p className="mt-5 max-w-[62ch] text-[17px] leading-[1.6] text-ink">
+          {project.tagline}
+        </p>
+      </header>
 
       <section
         aria-labelledby="overview-title"
