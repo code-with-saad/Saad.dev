@@ -5,10 +5,12 @@ export const dynamic = "force-dynamic";
 const NAMESPACE = process.env.VISITOR_NAMESPACE ?? "saad-dev-portfolio";
 const KEY = "site-visits";
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
+    const readOnly = new URL(request.url).searchParams.get("mode") === "read";
+    const action = readOnly ? "get" : "hit";
     const response = await fetch(
-      `https://abacus.jasoncameron.dev/hit/${encodeURIComponent(NAMESPACE)}/${KEY}`,
+      `https://abacus.jasoncameron.dev/${action}/${encodeURIComponent(NAMESPACE)}/${KEY}`,
       {
         cache: "no-store",
         headers: { "User-Agent": "saad-dev-portfolio" },

@@ -18,10 +18,11 @@ export default function PrivacyPage() {
         browse.
       </p>
       <p>
-        The only thing stored in your browser is your theme preference, plus a
-        short-lived visitor count in session storage. The visitor counter adds
-        to a shared page-view total that does not identify you, and none of it
-        is shared with advertisers.
+        The only things stored in your browser are your theme preference, a
+        short-lived visit count in session storage, and a small local flag so
+        repeat visits from the same browser are not counted twice. The visitor
+        counter adds to a shared visit total that does not identify you, and
+        none of it is shared with advertisers.
       </p>
       <p>
         There is no contact form on this site. The contact section links to

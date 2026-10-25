@@ -3,20 +3,13 @@
 import { useEffect, useState } from "react";
 
 const SESSION_KEY = "portfolio-visit-count";
+const SEEN_KEY = "portfolio-visited";
 
-function ordinal(value: number) {
-  const mod100 = value % 100;
-  if (mod100 >= 11 && mod100 <= 13) return "th";
-
-  switch (value % 10) {
-    case 1:
-      return "st";
-    case 2:
-      return "nd";
-    case 3:
-      return "rd";
-    default:
-      return "th";
+function hasVisited() {
+  try {
+    return localStorage.getItem(SEEN_KEY) === "1";
+  } catch {
+    return false;
   }
 }
 
@@ -32,11 +25,19 @@ export default function VisitorCounter() {
     }
 
     const controller = new AbortController();
+    // Only the first visit from a browser bumps the shared total; later views
+    // just read it, so reloads cannot inflate the count.
+    const url = hasVisited() ? "/api/visitors?mode=read" : "/api/visitors";
 
-    fetch("/api/visitors", { signal: controller.signal })
+    fetch(url, { signal: controller.signal })
       .then((response) => response.json())
       .then((data: { count?: number | null }) => {
         if (typeof data.count !== "number") return;
+
+        try {
+          localStorage.setItem(SEEN_KEY, "1");
+        } catch {}
+
         sessionStorage.setItem(SESSION_KEY, String(data.count));
         setCount(data.count);
       })
@@ -52,12 +53,8 @@ export default function VisitorCounter() {
     >
       {count === null ? null : (
         <>
-          You&apos;re the{" "}
-          <span className="text-ink">
-            {count.toLocaleString("en-US")}
-            {ordinal(count)}
-          </span>{" "}
-          visitor
+          <span className="text-ink">{count.toLocaleString("en-US")}</span>{" "}
+          {count === 1 ? "visit" : "visits"} so far
         </>
       )}
     </p>
