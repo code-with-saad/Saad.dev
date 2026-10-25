@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import {
   LuArrowLeft,
@@ -10,6 +9,7 @@ import {
   LuLinkedin,
 } from "react-icons/lu";
 import ProjectPreview from "@/components/ProjectPreview";
+import RevealLink from "@/components/RevealLink";
 import StackUsed from "@/components/StackUsed";
 import { PROJECTS } from "@/data/projects";
 
@@ -112,13 +112,14 @@ export default async function ProjectPage({
       data-project-slug={project.slug}
       className="py-12 min-[900px]:py-16"
     >
-      <Link
+      <RevealLink
         href="/#work"
+        revealSelector="[data-home-ready]"
         className={`inline-flex items-center gap-2 rounded-sm font-mono text-[11px] uppercase tracking-[0.16em] text-muted transition-colors hover:text-ink ${FOCUS_RING}`}
       >
         <LuArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />
         All projects
-      </Link>
+      </RevealLink>
 
       <figure className="mt-8">
         <ProjectPreview
@@ -271,8 +272,9 @@ export default async function ProjectPage({
         aria-label="Next project"
         className="mt-12 border-t border-line pt-6"
       >
-        <Link
+        <RevealLink
           href={`/projects/${nextProject.slug}`}
+          revealSelector={`[data-project-slug="${nextProject.slug}"]`}
           className={`group flex items-center justify-between gap-4 rounded-lg ${FOCUS_RING}`}
         >
           <span>
@@ -287,7 +289,7 @@ export default async function ProjectPage({
             className="h-5 w-5 shrink-0 text-muted transition-[color,transform] duration-200 group-hover:translate-x-1 group-hover:text-accent"
             aria-hidden="true"
           />
-        </Link>
+        </RevealLink>
       </nav>
     </article>
   );

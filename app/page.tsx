@@ -79,7 +79,7 @@ export default function Home() {
       <div className="min-[900px]:ml-80">
         <div className="min-[900px]:pl-[78px] min-[900px]:pr-10">
           <div className="mx-auto max-w-[900px] px-5 min-[900px]:mx-0 min-[900px]:px-0">
-            <main id="main-content">
+            <main id="main-content" data-home-ready>
               <div className="divide-y divide-line">
                 {SECTIONS.map(({ id, index, label }) => {
                   if (id === "intro") return <Intro key={id} />;

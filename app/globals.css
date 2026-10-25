@@ -215,6 +215,7 @@
   background: var(--muted);
 }
 
+/* Shared by the theme toggle and project route reveals. */
 ::view-transition-old(root),
 ::view-transition-new(root) {
   animation: none;

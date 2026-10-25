@@ -7,9 +7,9 @@ import {
   type ReactNode,
 } from "react";
 import Image from "next/image";
-import Link from "next/link";
 import { LuArrowRight, LuChevronDown } from "react-icons/lu";
 import Reveal from "@/components/Reveal";
+import RevealLink from "@/components/RevealLink";
 import { PROJECTS, type Project } from "@/data/projects";
 
 type FilterId = "all" | "live" | "full-stack" | "saas" | "earlier";
@@ -111,13 +111,14 @@ function CardLink({
   children: ReactNode;
 }) {
   return (
-    <Link
+    <RevealLink
       href={`/projects/${project.slug}`}
+      revealSelector={`[data-project-slug="${project.slug}"]`}
       aria-label={`Open the ${project.name} case study`}
       className={`${className} focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-canvas`}
     >
       {children}
-    </Link>
+    </RevealLink>
   );
 }
 
