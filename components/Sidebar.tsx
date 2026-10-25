@@ -5,6 +5,7 @@ import Image from "next/image";
 import { LuDownload, LuMenu, LuX } from "react-icons/lu";
 import { SECTIONS } from "@/data/sections";
 import { useActiveSection } from "@/hooks/useActiveSection";
+import OnekoToggle from "./OnekoToggle";
 import SidebarSearch from "./SidebarSearch";
 import ThemeToggle from "./ThemeToggle";
 
@@ -132,6 +133,7 @@ function SidebarActions() {
           Resume PDF
         </a>
         <ThemeToggle />
+        <OnekoToggle />
       </div>
     </>
   );

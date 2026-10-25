@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useSyncExternalStore } from "react";
+import { useOnekoEnabled } from "@/hooks/useOnekoPreference";
 
 // Port of oneko.js by adryd325 (https://github.com/adryd325/oneko.js).
 // Motion, timing and sprite coordinates are kept identical to the original.
@@ -110,7 +111,8 @@ function useMedia(query: string) {
 export default function CursorCompanion() {
   const finePointer = useMedia("(hover: hover) and (pointer: fine)");
   const reduceMotion = useMedia("(prefers-reduced-motion: reduce)");
-  const enabled = finePointer && !reduceMotion;
+  const onekoEnabled = useOnekoEnabled();
+  const enabled = finePointer && !reduceMotion && onekoEnabled;
 
   const nekoRef = useRef<HTMLDivElement | null>(null);
 
