@@ -232,7 +232,7 @@ function ProjectCard({ project }: { project: Project }) {
 }
 
 function HardCalls({ project }: { project: Project }) {
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
 
   if (!project.hardCalls?.length) return null;
 
