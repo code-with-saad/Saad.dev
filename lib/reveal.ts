@@ -7,19 +7,17 @@ function waitForSelector(selector: string, timeout = 1000) {
     const startedAt = performance.now();
 
     const check = () => {
-      if (document.querySelector(selector)) {
-        requestAnimationFrame(() => {
-          requestAnimationFrame(() => resolve());
-        });
-        return;
-      }
-
-      if (performance.now() - startedAt >= timeout) {
+      // rAF is paused while a view transition captures the DOM update, so poll
+      // with timers and let the browser render the new tree for its snapshot.
+      if (
+        document.querySelector(selector) ||
+        performance.now() - startedAt >= timeout
+      ) {
         resolve();
         return;
       }
 
-      requestAnimationFrame(check);
+      window.setTimeout(check, 30);
     };
 
     check();
