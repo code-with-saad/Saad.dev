@@ -30,8 +30,8 @@ type ChatMessage = {
   animate?: boolean;
 };
 
-const TYPING_TICKS = 60;
-const TYPING_SPEED = 20;
+const TYPING_TICKS = 110;
+const TYPING_SPEED = 26;
 const REPLY_DELAY = 380;
 
 const CHIP_CLASS =
