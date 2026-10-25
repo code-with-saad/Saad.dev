@@ -6,6 +6,7 @@ import Faq from "@/components/Faq";
 import Footer from "@/components/Footer";
 import GoToTop from "@/components/GoToTop";
 import Intro from "@/components/Intro";
+import MobileNav from "@/components/MobileNav";
 import ScrollProgress from "@/components/ScrollProgress";
 import SectionShell from "@/components/SectionShell";
 import SelectedWork from "@/components/SelectedWork";
@@ -18,6 +19,7 @@ export default function Home() {
     <div className="min-h-screen bg-canvas text-ink">
       <ScrollProgress />
       <Sidebar />
+      <MobileNav />
       <Assistant />
       <GoToTop />
 
