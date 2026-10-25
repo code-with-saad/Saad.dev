@@ -1,9 +1,10 @@
+import CountUp from "@/components/CountUp";
 import Reveal from "@/components/Reveal";
 
 const STATS = [
-  { value: "9+", label: "PROJECTS SHIPPED" },
-  { value: "1+", label: "Year of Working Experience" },
-  { value: "2+", label: "TEAM SUBMISSIONS" },
+  { value: 9, suffix: "+", label: "PROJECTS SHIPPED" },
+  { value: 1, suffix: "+", label: "Year of Working Experience" },
+  { value: 2, suffix: "+", label: "TEAM SUBMISSIONS" },
 ];
 
 export default function Intro() {
@@ -37,9 +38,11 @@ export default function Intro() {
         <ul className="mt-10 grid grid-cols-3 gap-6">
           {STATS.map((stat) => (
             <li key={stat.label}>
-              <span className="block font-display text-[2.5rem] font-extrabold leading-none tracking-[-0.03em] text-ink">
-                {stat.value}
-              </span>
+              <CountUp
+                value={stat.value}
+                suffix={stat.suffix}
+                className="block font-display text-[2.5rem] font-extrabold leading-none tracking-[-0.03em] text-ink"
+              />
               <span className="mt-2 block font-mono text-[10px] leading-relaxed tracking-[0.14em] text-muted">
                 {stat.label}
               </span>

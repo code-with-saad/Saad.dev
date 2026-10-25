@@ -251,6 +251,14 @@
     animation: none !important;
     transition: none !important;
   }
+
+  .count-up [data-count-display] {
+    display: none;
+  }
+
+  .count-up::before {
+    content: attr(data-count-value);
+  }
 }
 
 @media (scripting: none) {
@@ -258,5 +266,13 @@
   .reveal .tech-tag {
     opacity: 1 !important;
     transform: none !important;
+  }
+
+  .count-up [data-count-display] {
+    display: none;
+  }
+
+  .count-up::before {
+    content: attr(data-count-value);
   }
 }
