@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import LegalPage from "@/components/LegalPage";
 
 export const metadata: Metadata = {
-  title: "Privacy | Muhammad Saad",
+  title: "Privacy",
   description: "What this portfolio collects, and what it does not.",
 };
 
@@ -18,14 +18,16 @@ export default function PrivacyPage() {
         browse.
       </p>
       <p>
-        The only thing stored in your browser is your theme preference, and it is
-        not sent to me.
+        The only thing stored in your browser is your theme preference, plus a
+        short-lived visitor count in session storage. The visitor counter adds
+        to a shared page-view total that does not identify you, and none of it
+        is shared with advertisers.
       </p>
       <p>
-        There is no contact form on this site. The contact section links to email
-        and LinkedIn. If you email me, your email address and the contents of
-        your message are handled by your email provider and mine. I use them only
-        to reply.
+        There is no contact form on this site. The contact section links to
+        email, WhatsApp and LinkedIn. If you email me, your email address and
+        the contents of your message are handled by your email provider and
+        mine. I use them only to reply.
       </p>
       <p>
         This site is hosted on Vercel. Vercel may keep standard server logs, such
